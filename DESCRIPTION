@@ -16,4 +16,6 @@ Imports:
     dplyr,
     reshape2,
     phyloseq,
-    vegan
+    vegan,
+    tibble,
+    shiny
