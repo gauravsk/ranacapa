@@ -18,4 +18,11 @@ Imports:
     phyloseq,
     vegan,
     tibble,
-    shiny
+    shiny,
+    plotly,
+    gridBase,
+    broom,
+    gridExtra,
+    tibble,
+    scales,
+    heatmaply
