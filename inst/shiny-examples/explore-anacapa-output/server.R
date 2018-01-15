@@ -15,6 +15,7 @@ library(plotly)
 library(tibble)
 library(ranacapa)
 library(scales)
+library(heatmaply)
 
 options(digits = 5, shiny.maxRequestSize=10*1024^2)
 
@@ -107,14 +108,14 @@ server <- function(input, output)({
   })
 
   # Rarefaction curve before and after rarefaction -----------
-  output$rarefaction_ur <- renderPlot({
-    p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
-    q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() +
-      theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
-            panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
-    q
-  })
+  # output$rarefaction_ur <- renderPlot({
+  #   p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
+  #   q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
+  #     theme_bw() +
+  #     theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
+  #           panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
+  #   p
+  # })
 
   output$rarefaction_r <- renderPlotly({
     p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
@@ -216,6 +217,29 @@ server <- function(input, output)({
     mor_jac <- phyloseq::distance(data_subset(), method = input$dissimMethod)
     broom::tidy(TukeyHSD(betadisper(mor_jac, getElement(sdf, input$var))))
   }, digits = 5)
+
+
+  ## Heatmap of taxonomy by site ---------
+  output$tax_heat <- renderPlotly({
+    biom <- anacapa_output() %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>%
+      mutate(sum.taxonomy = ifelse(sum.taxonomy == "", "NA;NA;NA;NA;NA;NA", sum.taxonomy))
+
+    for_hm <- cbind(biom, colsplit(anacapa_output()$sum.taxonomy, ";",
+                                               names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
+    for_hm <- for_hm %>%
+      mutate(Phylum = ifelse(is.na(Phylum), "unknown", Phylum)) %>%
+      mutate(Class = ifelse(is.na(Class), "unknown", Class)) %>%
+      mutate(Order = ifelse(is.na(Order), "unknown", Order)) %>%
+      mutate(Family = ifelse(is.na(Family), "unknown", Family)) %>%
+      mutate(Genus = ifelse(is.na(Genus), "unknown", Genus)) %>%
+      mutate(Species = ifelse(is.na(Species), "unknown", Species))
+
+    for_hm <- for_hm %>% group_by(get(input$taxon_level)) %>% summarize_if(is.numeric, sum) %>%
+      data.frame %>% column_to_rownames("get.input.taxon_level.")
+    for_hm[for_hm == 0] <- NA
+
+    heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = T, grid_gap = 1, na.value = "white")
+  })
 
 
 })

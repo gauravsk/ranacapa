@@ -14,9 +14,9 @@ shinyUI(pageWithSidebar(
     conditionalPanel(condition="input.tabselected == 3 | input.tabselected == 4 | input.tabselected == 5 | input.tabselected == 6", uiOutput("which_variable_r")),
     conditionalPanel(condition="input.tabselected == 4", uiOutput("which_divtype")),
     conditionalPanel(condition="input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
-    conditionalPanel(condition="input.tabselected == 7", uiOutput("which_taxon_level")),
     conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_depth")),
-    conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_reps"))
+    conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_reps")),
+    conditionalPanel(condition="input.tabselected == 7 | input.tabselected == 8", uiOutput("which_taxon_level"))
 
   ),
 
@@ -24,7 +24,8 @@ shinyUI(pageWithSidebar(
     tabsetPanel(
       tabPanel("About", value=1, helpText("Select a biom table and a metadata file")),
       tabPanel("View OTU table", value=2, helpText("Here's the OTU table (taxon name not displayed)"), dataTableOutput("print_biom")),
-      tabPanel("Rarefaction curve", value = 3, plotOutput("rarefaction_ur"),
+      tabPanel("Rarefaction curve", value = 3,
+               # plotOutput("rarefaction_ur"),
                plotlyOutput("rarefaction_r")),
       tabPanel("Alpha Diversity exploration", value = 4, plotlyOutput("alpharichness"),
                tableOutput("alphaDivAOV"), tableOutput("alphaDivTukey")),
@@ -33,6 +34,7 @@ shinyUI(pageWithSidebar(
                verbatimTextOutput("permTestTable"),
                tableOutput("betaTukey")),
       tabPanel("Taxonomy Barplot", value = 7, plotlyOutput("tax_bar")),
+      tabPanel("Taxonomy Heatmap", value = 8, plotlyOutput("tax_heat")),
 
 
       id = "tabselected"
