@@ -34,7 +34,7 @@ shinyUI(pageWithSidebar(
                verbatimTextOutput("permTestTable"),
                tableOutput("betaTukey")),
       tabPanel("Taxonomy Barplot", value = 7, plotlyOutput("tax_bar")),
-      tabPanel("Taxonomy Heatmap", value = 8, plotlyOutput("tax_heat")),
+      tabPanel("Taxonomy Heatmap", value = 8, plotlyOutput("tax_heat", height = "750px", width = "750px")),
 
 
       id = "tabselected"

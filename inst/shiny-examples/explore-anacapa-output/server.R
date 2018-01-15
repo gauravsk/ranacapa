@@ -80,7 +80,7 @@ server <- function(input, output)({
   })
   output$which_taxon_level <- renderUI({
     radioButtons("taxon_level", "Pick the taxonomic level for making the plot",
-                 choices = c("Kingdom", "Phylum", "Class", "Order"))
+                 choices = c("Phylum", "Class", "Order", "Family", "Genus", "Species"))
 
   })
   output$rare_depth <- renderUI({
@@ -227,12 +227,12 @@ server <- function(input, output)({
     for_hm <- cbind(biom, colsplit(anacapa_output()$sum.taxonomy, ";",
                                                names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
     for_hm <- for_hm %>%
-      mutate(Phylum = ifelse(is.na(Phylum), "unknown", Phylum)) %>%
-      mutate(Class = ifelse(is.na(Class), "unknown", Class)) %>%
-      mutate(Order = ifelse(is.na(Order), "unknown", Order)) %>%
-      mutate(Family = ifelse(is.na(Family), "unknown", Family)) %>%
-      mutate(Genus = ifelse(is.na(Genus), "unknown", Genus)) %>%
-      mutate(Species = ifelse(is.na(Species), "unknown", Species))
+      mutate(Phylum = ifelse(is.na(Phylum) | Phylum == "", "unknown", Phylum)) %>%
+      mutate(Class = ifelse(is.na(Class) | Class == "", "unknown", Class)) %>%
+      mutate(Order = ifelse(is.na(Order) | Order == "", "unknown", Order)) %>%
+      mutate(Family = ifelse(is.na(Family) | Family == "", "unknown", Family)) %>%
+      mutate(Genus = ifelse(is.na(Genus) | Genus == "", "unknown", Genus)) %>%
+      mutate(Species = ifelse(is.na(Species)| Species == "", "unknown", Species))
 
     for_hm <- for_hm %>% group_by(get(input$taxon_level)) %>% summarize_if(is.numeric, sum) %>%
       data.frame %>% column_to_rownames("get.input.taxon_level.")
