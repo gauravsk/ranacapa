@@ -9,7 +9,7 @@
 ```
 library(devtools)
 
-install_github("gauravsk/ranacap", auth_token = "PASTE TOKEN")
+install_github("gauravsk/ranacapa", auth_token = "PASTE TOKEN")
 ```
 
 3. The package installation may take a few minutes.
