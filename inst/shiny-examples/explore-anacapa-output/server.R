@@ -104,14 +104,14 @@ server <- function(input, output)({
   })
 
   # Rarefaction curve before and after rarefaction -----------
-  # output$rarefaction_ur <- renderPlot({
-  #   p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
-  #   q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-  #     theme_bw() +
-  #     theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
-  #           panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
-  #   p
-  # })
+  output$rarefaction_ur <- renderPlotly({
+    p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
+    q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
+      theme_bw() +
+      theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
+            panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
+    ggplotly(q)
+  })
 
   output$rarefaction_r <- renderPlotly({
     p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
@@ -197,22 +197,29 @@ server <- function(input, output)({
 
   output$adonisTable <- renderTable ({
     sampledf <- data.frame(sample_data(data_subset()))
-    mor_jac <- phyloseq::distance(data_subset(), method = input$dissimMethod)
-    broom::tidy(adonis(as.formula(paste("mor_jac~", input$var)), data = sampledf)$aov.tab)
+    dist_obj <- phyloseq::distance(data_subset(), method = input$dissimMethod)
+    broom::tidy(adonis(as.formula(paste("dist_obj~", input$var)), data = sampledf)$aov.tab)
 
   }, digits = 5)
 
   output$permTestTable <- renderPrint({
     sdf <- as(sample_data(data_subset()), "data.frame")
-    mor_jac <- phyloseq::distance(data_subset(), method = input$dissimMethod)
-    (betadisper(mor_jac, getElement(sdf, input$var)))
+    dist_obj <- phyloseq::distance(data_subset(), method = input$dissimMethod)
+    betadisper(dist_obj, getElement(sdf, input$var))
   })
 
   output$betaTukey <- renderTable({
     sdf <- as(sample_data(data_subset()), "data.frame")
-    mor_jac <- phyloseq::distance(data_subset(), method = input$dissimMethod)
-    broom::tidy(TukeyHSD(betadisper(mor_jac, getElement(sdf, input$var))))
+    dist_obj <- phyloseq::distance(data_subset(), method = input$dissimMethod)
+    broom::tidy(TukeyHSD(betadisper(dist_obj, getElement(sdf, input$var))))
   }, digits = 5)
+
+  output$pairwiseAdonis <- renderPrint({
+    sdf <- as(sample_data(data_subset()), "data.frame")
+    veganComm <- vegan_otu(data_subset())
+    pairwise.adonis(veganComm,getElement(sdf, input$var),sim.method = 'jaccard')
+  })
+
 
 
   ## Heatmap of taxonomy by site ---------

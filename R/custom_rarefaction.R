@@ -5,7 +5,8 @@
 #' @return phyloseq class object
 #' @author Gaurav Kandlikar
 
-custom_rarefaction <- function(physeq, sample_size = 100000, replicates = 10, ...) {
+custom_rarefaction <- function(physeq, sample_size = 10000, replicates = 10, ...) {
+
   reps  <- replicate(replicates, rarefy_even_depth(physeq, sample.size = sample_size))
 
   dfs <- lapply(reps, function(x) as.data.frame(x@otu_table@.Data))

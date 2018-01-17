@@ -25,4 +25,5 @@ Imports:
     gridExtra,
     tibble,
     scales,
-    heatmaply
+    heatmaply,
+    ggdendro

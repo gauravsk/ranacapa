@@ -28,3 +28,11 @@ convert_anacapa_to_phyloseq <- function(ana_out, mapping_file) {
   sampledata <- sample_data(mapping_file)
   merge_phyloseq(physeq, sampledata)
 }
+
+vegan_otu <- function(physeq) {
+  OTU <- otu_table(physeq)
+  if (taxa_are_rows(OTU)) {
+    OTU <- t(OTU)
+  }
+  return(as(OTU, "matrix"))
+}
