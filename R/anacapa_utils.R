@@ -1,13 +1,21 @@
+#' Takes a site-abundance table from Anacapa, and summarizes to each unique taxon in the sum.taxonomy column
+#' @param ana_out OTU table from Anacapa
+#' @author Gaurav Kandlikar
+group_anacapa_by_taxonomy <- function(ana_out) {
+  ana_out %>% filter(sum.taxonomy != "") %>% group_by(sum.taxonomy) %>%
+    summarize_if(is.numeric,sum) %>% data.frame
+}
+
 #' Takes an site-abundance table from Anacapa, along with a qiime-style mapping file, and returns a phyloseq object
 #' @param ana_out OTU table from Anacapa
 #' @param mapping_file Qiime-style mapping
 #' @return phyloseq class object
 #' @author Gaurav Kandlikar
 
+
 convert_anacapa_to_phyloseq <- function(ana_out, mapping_file) {
 
-  ana_out2 <- ana_out %>% filter(sum.taxonomy != "") %>% group_by(sum.taxonomy) %>%
-    summarize_if(is.numeric,sum) %>% data.frame %>%
+  ana_out2 <- group_anacapa_by_taxonomy(ana_out) %>%
     column_to_rownames("sum.taxonomy") %>% as.matrix
   ana_out2 <- ana_out2[ , order(colnames(ana_out2))]
 
