@@ -2,6 +2,12 @@
 
 #### How to run:
 
+0. Install the `phyloseq` package into `R`:  
+  ```
+  source('http://bioconductor.org/biocLite.R')
+  biocLite('phyloseq')
+  ```
+
 1. Generate a personal access token (PAT) on github at https://github.com/settings/tokens (click on "Generate new token"; give it a name; select the checkbox next to "repo"). Copy the generated authorization token.
 
 2. You will use the access token generated above to install the package into R:
