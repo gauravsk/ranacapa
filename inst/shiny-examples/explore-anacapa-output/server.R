@@ -52,7 +52,7 @@ server <- function(input, output)({
   output$biomSelect <- renderUI({
     req(input$mode)
     if(input$mode == "Custom"){
-      fileInput("in_metadata", "Select metadata")
+      fileInput("in_biom", "Select biom table")
     }
   })
   output$metaSelect <- renderUI({
