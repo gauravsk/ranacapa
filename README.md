@@ -2,20 +2,19 @@
 
 #### How to run:
 
-0. Install the `phyloseq` package into `R`:  
+0. Install the `phyloseq` and `devtools` packages into `R` if you don't already have them:  
   ```
   source('http://bioconductor.org/biocLite.R')
   biocLite('phyloseq')
+  
+  install.packages('devtools')
   ```
 
-1. Generate a personal access token (PAT) on github at https://github.com/settings/tokens (click on "Generate new token"; give it a name; select the checkbox next to "repo"). Copy the generated authorization token.
-
-2. You will use the access token generated above to install the package into R:
-
+1. Install ranacapa:
 ```
 library(devtools)
 
-install_github("gauravsk/ranacapa", auth_token = "PASTE TOKEN")
+devtools::install_github("gauravsk/ranacapa", auth_token = "897487ba3b86fdebd56c35ef75d039479296f882")
 ```
 
 3. The package installation may take a few minutes.
