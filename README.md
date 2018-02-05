@@ -39,6 +39,6 @@ ranacapa::runExample()
 2. In the terminal the script runs as:
 
 ```
-Rscript ranacapa_automated.R /path/to/input_biom.txt /path/to/input_metadata.txt /path/to/desired_output_directory
+Rscript ranacapa_automated.R /path/to/input_biom.txt /path/to/input_metadata.txt /path/to/desired_output_directory rarefaction_depth rarefaction_replicates
 ```
 
