@@ -26,3 +26,7 @@ install_github("gauravsk/ranacapa", auth_token = "PASTE TOKEN")
 library(ranacapa)
 ranacapa::runExample()
 ```
+
+5. To run the code directly from the console, you can run the following steps or run a (currently To-Be-Written) script in `Anacapa`.
+
+### Guide to processing Anacapa output 
