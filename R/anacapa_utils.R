@@ -19,8 +19,8 @@ convert_anacapa_to_phyloseq <- function(ana_out, mapping_file) {
     column_to_rownames("sum.taxonomy") %>% as.matrix
   ana_out2 <- ana_out2[ , order(colnames(ana_out2))]
 
-  if (any((colSums(ana_out2 == 0)))) {
-    print("excluding column", which(colSums(ana_out2) == 0), "because it has no taxa")
+  if (any((colSums(ana_out2) == 0))) {
+    print(paste("excluding column", which(colSums(ana_out2) == 0), "because it has no taxa"))
   }
   ana_out2 <- ana_out2[,-which(colSums(ana_out2) == 0)]
 
