@@ -15,7 +15,7 @@
 ```
 library(devtools)
 
-devtools::install_github("gauravsk/ranacapa", auth_token = "897487ba3b86fdebd56c35ef75d039479296f882")
+devtools::install_github("gauravsk/ranacapa")
 ```
 
 2. The package installation may take a few minutes.
@@ -30,7 +30,7 @@ ranacapa::runExample()
 ```
 
 
-5. To run the code directly from the console, you can run the following steps or run a (currently To-Be-Written) script in `Anacapa`.
+5. To run the code directly from the console, you can run `ranacapa_automated.R` in `Anacapa`. Instructions for interactive exploration forthcoming.
 
 
 ### How to run, option 2 (scripted output of all possible graphs and tables, not interactive):
