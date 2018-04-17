@@ -11,7 +11,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Imports: 
+Imports:
     ggplot2,
     dplyr,
     reshape2,
@@ -27,3 +27,4 @@ Imports:
     scales,
     heatmaply,
     ggdendro
+Suggests: testthat
