@@ -134,8 +134,8 @@ server <- function(input, output)({
 
   # Alpha diversity aov generation
   physeq.alpha.anova <- reactive({
-    alpha.diversity <- estimate_richness(physeq(), measures = c("Observed", "Shannon"))
-    data <- cbind(sample_data(physeq()), alpha.diversity)
+    alpha.diversity <- estimate_richness(data_subset(), measures = c("Observed", "Shannon"))
+    data <- cbind(sample_data(data_subset()), alpha.diversity)
     aov(as.formula(paste(input$divtype, "~" , input$var)), data)
   })
 
