@@ -80,9 +80,15 @@ server <- function(input, output)({
 
   })
   output$rare_depth <- renderUI({
-    sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
-                value = 2000)
+    if (input$rare_method == "custom") {
+      sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
+                  value = 2000)
+    } else {
+      radioButtons("rarefaction_depth", label = "Rarefy all samples to the minimum number of seqs in any single sample",
+                   choices = c(colSums(anacapa_output() %>% select_if(is.numeric)) %>% min))
+    }
   })
+
   output$rare_reps <- renderUI({
     sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
   })
