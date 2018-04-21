@@ -107,18 +107,14 @@ server <- function(input, output)({
   output$rarefaction_ur <- renderPlotly({
     p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
     q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() +
-      theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
-            panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
+      theme_bw() + theme_ranacapa()
     ggplotly(q)
   })
 
   output$rarefaction_r <- renderPlotly({
     p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
     q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() +
-      theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
-            panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
+      theme_bw() + theme_ranacapa()
     ggplotly(tooltip = c("Sample", input$var))
   })
 
@@ -157,9 +153,7 @@ server <- function(input, output)({
       theme_bw() +  # stat_ellipse(type = "t", geom = "polygon", alpha = 0.2) +
       ggtitle(paste(input$var, "NMDS; dissimilarity method:",
                     tools::toTitleCase(input$dissimMethod))) + theme(plot.title = element_text(hjust = 0.5)) +
-      theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
-            panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())# + theme_bw(base_size = 19)
-
+      theme_ranacapa()
     ggplotly(tooltip = c(input$var, "x", "y")) %>% layout(hovermode = 'closest')
   })
 
