@@ -19,6 +19,7 @@ Imports:
     vegan,
     tibble,
     shiny,
+    shinythemes,
     plotly,
     gridBase,
     broom,

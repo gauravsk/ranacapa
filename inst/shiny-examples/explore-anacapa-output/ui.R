@@ -1,6 +1,8 @@
 library(plotly)
 library(shiny)
-shinyUI(pageWithSidebar(
+library(shinythemes)
+shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
+
   headerPanel("Exploring output from Anacapa pipeline"),
   sidebarPanel(
 
@@ -53,12 +55,30 @@ shinyUI(pageWithSidebar(
                plotlyOutput("rarefaction_r")),
 
 
-      tabPanel("Alpha Diversity exploration", value = 4,
-               h3("Explore the variation in alpha diversity among samples or across groups of samples"),
-               p(),
+      tabPanel("Alpha Diversity", value = 4,
+               h3("Background on alpha diversity"),
+               p("In ecology, the term", a("alpha diversity", href = "https://en.wikipedia.org/wiki/Alpha_diversity"), "refers
+                 simply to the diversity observed in a single sample. Although this may seem like a very simple concept,
+                 it turns out that there's many ways to consider diversity. The most obvious metric, of course, is simply
+                 to count the number of species found in a sample. This is the metric calculated with the 'Observed' option on the left."),
+               p("Beyond this obvious choice of just counting up the number of species, there's a variety of related metrics
+                 that can be used to calculate alpha diversity. Most of these metric address the following situation:"),
+               p("Consider you are comparing two communities. The observed species richness is 3. But in the first community,
+                 each species is represented by 100 individuals each; in the other, there are 290 individuals of Sp A, 9 of Sp B,
+                 and just 1 of Sp C. Clearly, there is something different about the diversity of these two communities even though
+                 they house the same number of species."),
+               p("This is the type of diversity captured by a metric known as", a("Shannon diversity", href = "https://en.wikipedia.org/wiki/Diversity_index#Shannon_index"),
+                 ". We present this option on the left, and encourage readers to explore the many other ways of measuring alpha
+                 diversity at a varity of resources listed at the bottom of this page"),
+
+               p("In addition to inspecting alpha diversity per sample, you also have the option to view the alpha diversity summarized
+                 by one of the characteristics of the plots. You can choose the characteristic from the dropdown list on the left."),
+
                plotlyOutput("alpharichness"),
                tableOutput("alphaDivAOV"),
-               tableOutput("alphaDivTukey")),
+               tableOutput("alphaDivTukey"),
+               h3("More resources on alpha diversity"),
+               p(a("Measurements of Biodiversity", href="http://www.marinespecies.org/introduced/wiki/Measurements_of_biodiversity"))),
       tabPanel("Beta Diversity exploration", value = 5,
                plotlyOutput("betanmdsplotly")), # ,
                # plotOutput("dissimMap")),
