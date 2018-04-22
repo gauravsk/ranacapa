@@ -18,13 +18,15 @@ Imports:
     phyloseq,
     vegan,
     tibble,
+    magrittr,
     shiny,
+    shinythemes,
     plotly,
     gridBase,
     broom,
     gridExtra,
-    tibble,
     scales,
     heatmaply,
+    methods,
     ggdendro
 Suggests: testthat
