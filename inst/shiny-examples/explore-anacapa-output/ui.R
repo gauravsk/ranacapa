@@ -36,7 +36,12 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
     conditionalPanel(condition="input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
 
     # On panels 7 and 8 (barplot and heatmap), ask which taxonomic level they want to visualize to
-    conditionalPanel(condition="input.tabselected == 7 | input.tabselected == 8", uiOutput("which_taxon_level"))
+    conditionalPanel(condition="input.tabselected == 7 | input.tabselected == 8", uiOutput("which_taxon_level")),
+    conditionalPanel(condition="input.tabselected == 7 | input.tabselected == 8",
+                     radioButtons("rared_taxplots", "Choose whether you would like to view the taxonomy barplot and heatmap for the
+                                  rarefied or unrarefied datasets",
+                                  choices = c("unrarefied", "rarefied")))
+
   ),
 
   mainPanel(

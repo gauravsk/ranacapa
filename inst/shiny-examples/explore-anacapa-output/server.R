@@ -238,17 +238,34 @@ server <- function(input, output)({
 
   # Panel 7: Taxonomy-by-site interactive Barplot -------
   output$tax_bar <- renderPlotly({
-    plot_bar(physeq(), fill = input$taxon_level)
-    ggplotly()
+
+    ## NOTE!
+    # Think more about whether we should use physeq() or data_subset_unrare() here
+    if(input$rared_taxplots == "unrarefied"){
+      plot_bar(physeq(), fill = input$taxon_level)
+      ggplotly()
+    } else{
+      plot_bar(data_subset(), fill = input$taxon_level)
+      ggplotly()
+    }
   })
 
   ## Panel 8: Heatmap of taxonomy by site ---------
   output$tax_heat <- renderPlotly({
-    biom <- anacapa_output() %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>%
-      mutate(sum.taxonomy = ifelse(sum.taxonomy == "", "NA;NA;NA;NA;NA;NA", sum.taxonomy))
 
-    for_hm <- cbind(biom, colsplit(anacapa_output()$sum.taxonomy, ";",
-                                               names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
+    if(input$rared_taxplots == "unrarefied"){
+      biom <- anacapa_output() %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>%
+        mutate(sum.taxonomy = ifelse(sum.taxonomy == "", "NA;NA;NA;NA;NA;NA", sum.taxonomy))
+
+      for_hm <- cbind(biom, colsplit(biom$sum.taxonomy, ";",
+                                     names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
+    } else {
+      biom <- data.frame(otu_table(data_subset()))
+
+      for_hm <- cbind(biom, colsplit(rownames(biom), ";",
+                                     names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
+    }
+
     for_hm <- for_hm %>%
       mutate(Phylum = ifelse(is.na(Phylum) | Phylum == "", "unknown", Phylum)) %>%
       mutate(Class = ifelse(is.na(Class) | Class == "", "unknown", Class)) %>%
@@ -260,8 +277,8 @@ server <- function(input, output)({
     for_hm <- for_hm %>% group_by(get(input$taxon_level)) %>% summarize_if(is.numeric, sum) %>%
       data.frame %>% column_to_rownames("get.input.taxon_level.")
     for_hm[for_hm == 0] <- NA
-
     heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = T, grid_gap = 1, na.value = "white")
+
   })
 
 
