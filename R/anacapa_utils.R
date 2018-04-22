@@ -2,7 +2,7 @@
 #' @param ana_out OTU table from Anacapa
 #' @author Gaurav Kandlikar
 group_anacapa_by_taxonomy <- function(ana_out) {
-  ana_out %>% filter(sum.taxonomy != "") %>% group_by(sum.taxonomy) %>%
+  ana_out %>% dplyr::filter(sum.taxonomy != "") %>% group_by(sum.taxonomy) %>%
     summarize_if(is.numeric,sum) %>% data.frame
 }
 
