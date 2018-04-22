@@ -128,9 +128,7 @@ server <- function(input, output)({
   output$alpharichness <- renderPlotly({
     p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype)
     q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) + theme_bw() +
-      xlab(paste(input$divtype, "Diversity")) +
-      theme(panel.grid.minor.y = element_blank(), panel.grid.minor.x = element_blank(),
-            panel.grid.major.y = element_blank(), panel.grid.major.x = element_blank())
+      xlab(paste(input$divtype, "Diversity")) + theme_ranacapa()
     ggplotly(tooltip = c("x", "value"))
   })
 
