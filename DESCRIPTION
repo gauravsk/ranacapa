@@ -6,7 +6,6 @@ Author: Gaurav Kandlikar
 Maintainer: Gaurav Kandlikar <gkandlikar@ucla.edu>
 Description: A set of utility functions to help explore output from the Anacapa eDNA pipeline
     An amalgamation of functions written for Anacapa and existing functions from published sources.
-    Will include test data shortly.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
