@@ -23,9 +23,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                                   choices = c("custom", "minimum")),
                      uiOutput("rare_depth")),
     conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_reps")),
-    conditionalPanel(condition="input.tabselected == 7 | input.tabselected == 8", uiOutput("which_taxon_level")),
-    conditionalPanel(condition="input.tabselected == 8", uiOutput("which_taxon_level"))
-
+    conditionalPanel(condition="input.tabselected == 7 | input.tabselected == 8", uiOutput("which_taxon_level"))
   ),
 
   mainPanel(
