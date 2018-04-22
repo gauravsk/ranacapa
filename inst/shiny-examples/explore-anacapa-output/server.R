@@ -17,8 +17,61 @@ options(digits = 5, shiny.maxRequestSize=10*1024^2)
 
 server <- function(input, output)({
 
-  # Read in data files and make the physeq object
+  # RenderUIs for Panel 1
+  output$biomSelect <- renderUI({
+    req(input$mode)
+    if(input$mode == "Custom"){
+      fileInput("in_biom", "Select biom table")
+    }
+  })
+  output$metaSelect <- renderUI({
+    req(input$mode)
+    if(input$mode == "Custom"){
+      fileInput("in_metadata", "Select metadata")
+    }
+  })
 
+  # RenderUI for which_variable_r, gets used in panels 3,4,5,6
+  output$which_variable_r <- renderUI({
+    selectInput("var", "Select the variable", choices = heads())
+  })
+
+  # RenderUI for which_divtype, for Alpha Diversity panel 3
+  output$which_divtype <- renderUI({
+    radioButtons("divtype", label = "Observed or Shannon diversity?",
+                 choices = c("Observed", "Shannon"))
+  })
+
+  # RenderUI for which_dissim, used for beta diversity panel 4,5
+  output$which_dissim <- renderUI({
+    radioButtons("dissimMethod", "Which type of distance metric would you like?",
+                 choices = c("bray", "jaccard"))
+  })
+
+  # RenderUI for which_taxon_level, used for barplot and heatmap in panels 7,8
+  output$which_taxon_level <- renderUI({
+    radioButtons("taxon_level", "Pick the taxonomic level for making the plot",
+                 choices = c("Phylum", "Class", "Order", "Family", "Genus", "Species"))
+
+  })
+
+  # Render UIs for Panel 3 (Rarefaction)
+  output$rare_depth <- renderUI({
+    if(input$rare_method == "custom"){
+      sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
+                  value = 2000)} else {
+                    radioButtons("rarefaction_depth", label = "The minimum number of reads in any single plot will be selected:",
+                                 choices = anacapa_output() %>% select_if(is.numeric) %>% colSums() %>% min()
+                    )
+                  }
+  })
+  output$rare_reps <- renderUI({
+    sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
+  })
+
+  ########################################################
+  # Read in data files and make the physeq object --------
+  ########################################################
   anacapa_output <- reactive({
     if(input$mode == "Custom") {
       read.table(input$in_biom$datapath, header = 1, sep = "\t", stringsAsFactors = F)
@@ -34,70 +87,24 @@ server <- function(input, output)({
       readRDS("data/demo_metadata.Rds")
     }
   })
-  # Make physeq object ----------
+  # Make physeq object ----
   physeq <- reactive({
     convert_anacapa_to_phyloseq(ana_out = anacapa_output(), mapping_file = mapping_file())
   })
 
+  # Make the object heads, that has the column names in the metadata file
   heads <- reactive({
     base::colnames(mapping_file())
   })
 
-  # BiomTable to print ---------
+  # Panel 2: BiomTable to print ---------
   output$print_biom <- renderDataTable({
     anacapa_output() %>% select(sum.taxonomy, everything())
   })
 
-  # UI inputs ------
-  output$biomSelect <- renderUI({
-    req(input$mode)
-    if(input$mode == "Custom"){
-      fileInput("in_biom", "Select biom table")
-    }
-  })
-  output$metaSelect <- renderUI({
-    req(input$mode)
-    if(input$mode == "Custom"){
-      fileInput("in_metadata", "Select metadata")
-    }
-  })
 
-  output$which_variable_r <- renderUI({
-    selectInput("var", "Select the variable", choices = heads())
-  })
 
-  output$which_divtype <- renderUI({
-    radioButtons("divtype", label = "Observed or Shannon diversity?",
-                 choices = c("Observed", "Shannon"))
-  })
-  output$which_dissim <- renderUI({
-    radioButtons("dissimMethod", "Which type of distance metric would you like?",
-                 choices = c("bray", "jaccard"))
-  })
-  output$which_taxon_level <- renderUI({
-    radioButtons("taxon_level", "Pick the taxonomic level for making the plot",
-                 choices = c("Phylum", "Class", "Order", "Family", "Genus", "Species"))
-
-  })
-  output$rare_depth <- renderUI({
-    if(input$rare_method == "custom"){
-      sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
-                  value = 2000)} else {
-                    radioButtons("rarefaction_depth", label = "The minimum number of reads in any single plot will be selected:",
-                                 choices = anacapa_output() %>% select_if(is.numeric) %>% colSums() %>% min()
-)
-                  }
-  })
-  output$rare_reps <- renderUI({
-    sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
-  })
-
-  # Time to make some graphs -----------
-  output$tax_bar <- renderPlotly({
-    plot_bar(physeq(), fill = input$taxon_level)
-    ggplotly()
-  })
-
+  # Panel 3: Rarefaction and associated plots ----------
   # Check if all samples have a non-NA value for the selected variable to plot by
   # If a sample has an NA for the selected variable, get rid of it from the
   # sample data and from the metadata and from the taxon table (the subset function does both)
@@ -114,7 +121,7 @@ server <- function(input, output)({
                        replicates = input$rarefaction_reps)
   })
 
-  # Rarefaction curve before and after rarefaction -----------
+  # Rarefaction curve before and after rarefaction
   output$rarefaction_ur <- renderPlotly({
     p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
     q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
@@ -129,7 +136,8 @@ server <- function(input, output)({
     ggplotly(tooltip = c("Sample", input$var))
   })
 
-  # Alpha diverstity boxplots ----------
+  # Panel 4: Alpha diversity
+  # Alpha diverstity boxplots
   output$alpharichness <- renderPlotly({
     p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype)
     q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) + theme_bw() +
@@ -144,17 +152,18 @@ server <- function(input, output)({
     aov(as.formula(paste(input$divtype, "~" , input$var)), data)
   })
 
-  # Alpha diversity AOV print --------
+  # Alpha diversity AOV print
   output$alphaDivAOV <- renderTable({
     broom::tidy(physeq.alpha.anova())
   }, digits = 4)
 
-  # Alpha Diversity tukey --------
+  # Alpha Diversity tukey
   output$alphaDivTukey <- renderTable({
     broom::tidy(TukeyHSD(physeq.alpha.anova()))
   }, digits = 4)
 
-  # NMDS plotly -----------
+  # Panel 5: Beta Diversity plots
+  # NMDS plotly
   output$betanmdsplotly <- renderPlotly({
     d <- distance(data_subset(), method=input$dissimMethod)
     ord <- ordinate(data_subset(), method = "MDS", distance = d)
@@ -199,6 +208,7 @@ server <- function(input, output)({
 
   }, height = 2000, width = 1000 )
 
+  # Panel 6: Beta diversity statistics ----------
   output$adonisTable <- renderTable ({
     sampledf <- data.frame(sample_data(data_subset()))
     dist_obj <- phyloseq::distance(data_subset(), method = input$dissimMethod)
@@ -226,7 +236,13 @@ server <- function(input, output)({
 
 
 
-  ## Heatmap of taxonomy by site ---------
+  # Panel 7: Taxonomy-by-site interactive Barplot -------
+  output$tax_bar <- renderPlotly({
+    plot_bar(physeq(), fill = input$taxon_level)
+    ggplotly()
+  })
+
+  ## Panel 8: Heatmap of taxonomy by site ---------
   output$tax_heat <- renderPlotly({
     biom <- anacapa_output() %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>%
       mutate(sum.taxonomy = ifelse(sum.taxonomy == "", "NA;NA;NA;NA;NA;NA", sum.taxonomy))

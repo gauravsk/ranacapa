@@ -7,24 +7,35 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
   sidebarPanel(
 
     ## conditionalPanel() functions for selected tab
+
+    # For Panel 1, have an input option
     conditionalPanel(condition="input.tabselected==1",
                      radioButtons("mode", label = "Run with demo data or custom dataset?",
                                  choices = c("Demo", "Custom"), selected = "Demo"),
                      uiOutput("biomSelect"),
                      uiOutput("metaSelect")),
 
+    # For panels 3, 4, 5, 6, ask user which varible they would like to visualize on
     conditionalPanel(condition="input.tabselected == 3 | input.tabselected == 4 |
                      input.tabselected == 5 | input.tabselected == 6",
                      uiOutput("which_variable_r")),
 
-        conditionalPanel(condition="input.tabselected == 3",
+    # On panel 3 (rarefaction), ask what depth they want to rarefy to
+    conditionalPanel(condition="input.tabselected == 3",
                      radioButtons("rare_method", "Choose whether you would like to pick a custom rarefaction depth,
                                   or whether samples should be rarefied to the minimum number of sequences in any single sample",
                                   choices = c("custom", "minimum")),
                      uiOutput("rare_depth")),
-    conditionalPanel(condition="input.tabselected == 4", uiOutput("which_divtype")),
-    conditionalPanel(condition="input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
+     # On panel 3, also ask how many replicate rarefactions should be done
     conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_reps")),
+
+    # On panel 4 (alpha diveristy), ask whether users want observed or Shannon div stats
+    conditionalPanel(condition="input.tabselected == 4", uiOutput("which_divtype")),
+
+    # On panel 5 (beta diersity),  ask whether users want to use NMDS or Bray disslimilarity
+    conditionalPanel(condition="input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
+
+    # On panels 7 and 8 (barplot and heatmap), ask which taxonomic level they want to visualize to
     conditionalPanel(condition="input.tabselected == 7 | input.tabselected == 8", uiOutput("which_taxon_level"))
   ),
 
@@ -80,9 +91,13 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                tableOutput("alphaDivTukey"),
                h3("More resources on alpha diversity"),
                p(a("Measurements of Biodiversity", href="http://www.marinespecies.org/introduced/wiki/Measurements_of_biodiversity"))),
+
+      # beta Diversity panels - first, just plots
       tabPanel("Beta Diversity exploration", value = 5,
                plotlyOutput("betanmdsplotly")), # ,
                # plotOutput("dissimMap")),
+
+      # beta Diversity panels- second, just stats
       tabPanel("Beta Diversity stats", value = 6,
                h3("Adonis table"),
                tableOutput("adonisTable"),
