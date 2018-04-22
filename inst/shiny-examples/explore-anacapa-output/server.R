@@ -93,14 +93,20 @@ server <- function(input, output)({
     ggplotly()
   })
 
+  # Check if all samples have a non-NA value for the selected variable to plot by
+  # If a sample has an NA for the selected variable, get rid of it from the
+  # sample data and from the metadata and from the taxon table (the subset function does both)
   data_subset_unrare <- reactive({
     p2 <- physeq()
     sample_data(p2) <- physeq() %>% sample_data %>% subset(., !is.na(get(input$var)))
     p2
   })
 
+  # rarefy the subsetted dataset
   data_subset <- reactive({
-    custom_rarefaction(data_subset_unrare(), sample_size = input$rarefaction_depth, replicates = input$rarefaction_reps)
+    custom_rarefaction(data_subset_unrare(),
+                       sample_size = input$rarefaction_depth,
+                       replicates = input$rarefaction_reps)
   })
 
   # Rarefaction curve before and after rarefaction -----------
@@ -115,7 +121,7 @@ server <- function(input, output)({
 
   output$rarefaction_r <- renderPlotly({
     p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
-    q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
+    q <- p +  facet_wrap(as.formula(paste("~", input$var))) +
       theme_bw() +
       theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
             panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
