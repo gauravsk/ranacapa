@@ -80,8 +80,13 @@ server <- function(input, output)({
 
   })
   output$rare_depth <- renderUI({
-    sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
-                value = 2000)
+    if(input$rare_method == "custom"){
+      sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
+                  value = 2000)} else {
+                    radioButtons("rarefaction_depth", label = "The minimum number of reads in any single plot will be selected:",
+                                 choices = anacapa_output() %>% select_if(is.numeric) %>% colSums() %>% min()
+)
+                  }
   })
   output$rare_reps <- renderUI({
     sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
@@ -113,18 +118,14 @@ server <- function(input, output)({
   output$rarefaction_ur <- renderPlotly({
     p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
     q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() +
-      theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
-            panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
+      theme_bw() + theme_ranacapa()
     ggplotly(q)
   })
 
   output$rarefaction_r <- renderPlotly({
     p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
     q <- p +  facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() +
-      theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
-            panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
+      theme_bw() + theme_ranacapa()
     ggplotly(tooltip = c("Sample", input$var))
   })
 
@@ -132,9 +133,7 @@ server <- function(input, output)({
   output$alpharichness <- renderPlotly({
     p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype)
     q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) + theme_bw() +
-      xlab(paste(input$divtype, "Diversity")) +
-      theme(panel.grid.minor.y = element_blank(), panel.grid.minor.x = element_blank(),
-            panel.grid.major.y = element_blank(), panel.grid.major.x = element_blank())
+      xlab(paste(input$divtype, "Diversity")) + theme_ranacapa()
     ggplotly(tooltip = c("x", "value"))
   })
 
@@ -162,10 +161,9 @@ server <- function(input, output)({
     nmdsplot <- plot_ordination(data_subset(), ord, input$var, color = input$var) +
       theme_bw() +  # stat_ellipse(type = "t", geom = "polygon", alpha = 0.2) +
       ggtitle(paste(input$var, "NMDS; dissimilarity method:",
-                    tools::toTitleCase(input$dissimMethod))) + theme(plot.title = element_text(hjust = 0.5)) +
-      theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),
-            panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())# + theme_bw(base_size = 19)
-
+                    tools::toTitleCase(input$dissimMethod))) +
+      theme(plot.title = element_text(hjust = 0.5)) +
+      theme_ranacapa()
     ggplotly(tooltip = c(input$var, "x", "y")) %>% layout(hovermode = 'closest')
   })
 

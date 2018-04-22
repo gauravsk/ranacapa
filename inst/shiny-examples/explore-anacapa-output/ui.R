@@ -14,14 +14,16 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                      uiOutput("metaSelect")),
 
     conditionalPanel(condition="input.tabselected == 3 | input.tabselected == 4 |
-                     input.tabselected == 5 | input.tabselected == 6", uiOutput("which_variable_r")),
-    conditionalPanel(condition="input.tabselected == 4", uiOutput("which_divtype")),
-    conditionalPanel(condition="input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
-    conditionalPanel(condition="input.tabselected == 3",
+                     input.tabselected == 5 | input.tabselected == 6",
+                     uiOutput("which_variable_r")),
+
+        conditionalPanel(condition="input.tabselected == 3",
                      radioButtons("rare_method", "Choose whether you would like to pick a custom rarefaction depth,
                                   or whether samples should be rarefied to the minimum number of sequences in any single sample",
                                   choices = c("custom", "minimum")),
                      uiOutput("rare_depth")),
+    conditionalPanel(condition="input.tabselected == 4", uiOutput("which_divtype")),
+    conditionalPanel(condition="input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
     conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_reps")),
     conditionalPanel(condition="input.tabselected == 7 | input.tabselected == 8", uiOutput("which_taxon_level"))
   ),
