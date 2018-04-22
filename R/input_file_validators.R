@@ -1,20 +1,26 @@
-#' scrub_seqNum_col takes one biom table as its input, and if it include
+#' Remove "xxx_seq_number" column from ana_out file if it exists
+#' takes one biom table as its input, and if it include
 #' a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 #' any longer
 #'
 #' @param ana_out
 #' @author Gaurav Kandlikar
+#' @return ana_out file, with "xxx_seq_number" column removed (if it existed)
 scrub_seqNum_column <- function(ana_out) {
   to_return <- ana_out %>% select(-matches("seq_number"))
   return(to_return)
 }
 
 
+#' Verify that the input ana_out file and the input mapping file meets specificationss
 #' validate_input_biom takes one biom table as its input, and verfies that it meets
 #' the expected standards.
 #' The standards incude:
 #' 1. Column names exist.
 #' 2. One of the columns is named "sum.taxonomy"
+#' 3. The "xxx_seq_number" column, if it ever existed, is removed
+#' 4. All columns apart from sum.taxonomy should be numeric
+#' 5. All columns apart from sum.taxonomy should have corresponding row in metadata file
 #'
 #' @param ana_out OTU table from Anacapa
 #' @param mapping_file Qiime-style mapping
