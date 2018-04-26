@@ -84,7 +84,9 @@ server <- function(input, output)({
     if(input$mode == "Custom") {
       read.table(input$in_metadata$datapath, header = 1, sep = "\t", stringsAsFactors = F)
     } else {
-      readRDS("data/demo_metadata.Rds")
+      tmf <- readRDS("data/demo_metadata.Rds")
+      tmf[sapply(tmf, is.character)] <- lapply(tmf[sapply(tmf, is.character)], function(x) factor(x, levels=gtools::mixedsort(unique(x))))
+      tmf
     }
   })
   # Make physeq object ----
@@ -139,9 +141,11 @@ server <- function(input, output)({
   # Panel 4: Alpha diversity
   # Alpha diverstity boxplots
   output$alpharichness <- renderPlotly({
-    p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype)
+    color <- "black"; shape <- "circle"
+    colorvecname = "color"; shapevecname = "shape"
+    p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype, color = colorvecname, shape = shapevecname)
     q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) + theme_bw() +
-      xlab(paste(input$divtype, "Diversity")) + theme_ranacapa()
+      xlab(paste(input$divtype, "Diversity")) + theme_ranacapa() + theme(legend.position = "none")
     ggplotly(tooltip = c("x", "value"))
   })
 
