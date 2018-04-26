@@ -92,6 +92,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                  by one of the characteristics of the plots. You can choose the characteristic from the dropdown list on the left."),
 
                plotlyOutput("alpharichness"),
+               br(),
                tableOutput("alphaDivAOV"),
                tableOutput("alphaDivTukey"),
                h3("More resources on alpha diversity"),
