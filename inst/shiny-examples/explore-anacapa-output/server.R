@@ -89,9 +89,7 @@ server <- function(input, output)({
     if(input$mode == "Custom") {
       read.table(input$in_metadata$datapath, header = 1, sep = "\t", stringsAsFactors = F)
     } else {
-      tmf <- readRDS("data/demo_metadata.Rds")
-      tmf[sapply(tmf, is.character)] <- lapply(tmf[sapply(tmf, is.character)], function(x) factor(x, levels=gtools::mixedsort(unique(x))))
-      tmf
+      readRDS("data/demo_metadata.Rds")
     }
   })
 

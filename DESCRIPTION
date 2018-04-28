@@ -28,6 +28,5 @@ Imports:
     heatmaply,
     methods,
     ggdendro,
-    stringr,
-    gtools
+    stringr
 Suggests: testthat
