@@ -1,13 +1,11 @@
 #' Make a rarefaction curve using ggplot2
-#'
-#' @param physeq A phyloseq class object, from which abundance data are extracted\
+#' @param physeq A phyloseq class object, from which abundance data are extracted
 #' @param step Step Size for sample size in rarefaction curves
 #' @param label Default `NULL`. Character string. The name of the variable to map to text labels on the plot. Similar to color option but for plotting text.
-#' @param color Default `NULL`. Character string. The name of the variable to map to the colors in the plot. This can be a sample variables (among the set returned by `sample_variables(physeq)` ) or taxonomic rank (among the set returned by `rank_names(physeq)`).
-#' @param color default `NULL`.Character string. The name of the variable to map to the colors in the plot. Similar to color option but for plotting text.
+#' @param color Default `NULL`. Character string. The name of the variable to map to the colors in the plot. This can be a sample variables among the set returned by sample_variables(physeq) or taxonomic rank, among the set returned by rank_names(physeq)
 #' @param plot default `TRUE`. Logical. Should the graph be plotted
 #' @param parallel default `FALSE`. Logical. Should rarefaction be parallelized
-#' @param se default `TRUE`.Logical. Should standard errors be calculated.
+#' @param se default `TRUE`. Logical. Should standard errors be calculated.
 
 ggrare <- function(physeq, step = 10, label = NULL, color = NULL, plot = TRUE, parallel = FALSE, se = TRUE) {
 

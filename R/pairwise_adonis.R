@@ -83,7 +83,9 @@ pairwise.adonis <- function(x, factors, sim.function = "vegdist", sim.method = "
 }
 
 
-### Method summary
+#' Summarize the results of pairwise_adonis
+#' @param object output from pairwise_adonis
+#' @param ... other options for print
 summary.pwadonis = function(object, ...) {
   cat("Result of pairwise.adonis:\n")
   cat("\n")

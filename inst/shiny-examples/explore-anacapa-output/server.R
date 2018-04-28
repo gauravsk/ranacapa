@@ -70,13 +70,18 @@ server <- function(input, output)({
   })
 
   ########################################################
-  # Read in data files and make the physeq object --------
+  # Read in data files, validate and make the physeq object --------
   ########################################################
   anacapa_output <- reactive({
     if(input$mode == "Custom") {
-      read.table(input$in_biom$datapath, header = 1, sep = "\t", stringsAsFactors = F)
+      read.table(input$in_biom$datapath, header = 1,
+                 sep = "\t", stringsAsFactors = F) %>%
+        scrub_seqNum_column() %>%
+        group_anacapa_by_taxonomy()
     } else {
-      readRDS("data/demo_biomdata.Rds")
+      readRDS("data/demo_biomdata.Rds") %>%
+        scrub_seqNum_column() %>%
+        group_anacapa_by_taxonomy()
     }
   })
 
@@ -84,10 +89,13 @@ server <- function(input, output)({
     if(input$mode == "Custom") {
       read.table(input$in_metadata$datapath, header = 1, sep = "\t", stringsAsFactors = F)
     } else {
-      tmf <- readRDS("data/demo_metadata.Rds")
-      tmf[sapply(tmf, is.character)] <- lapply(tmf[sapply(tmf, is.character)], function(x) factor(x, levels=gtools::mixedsort(unique(x))))
-      tmf
+      readRDS("data/demo_metadata.Rds")
     }
+  })
+
+
+  output$fileStatus <- renderText({
+    validate_input_biom(anacapa_output(), mapping_file())
   })
   # Make physeq object ----
   physeq <- reactive({
@@ -99,7 +107,8 @@ server <- function(input, output)({
     base::colnames(mapping_file())
   })
 
-  # Panel 2: BiomTable to print ---------
+  # Panel 2:  print taxon table ---------
+
   output$print_biom <- renderDataTable({
     anacapa_output() %>% select(sum.taxonomy, everything())
   })

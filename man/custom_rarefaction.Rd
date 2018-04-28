@@ -12,6 +12,8 @@ custom_rarefaction(physeq, sample_size = 10000, replicates = 10, ...)
 \item{sample_size}{Desired depth of rarefaction}
 
 \item{replicates}{Desired number of times to resample from community}
+
+\item{...}{Other options for phyloseq function rarefy_even_depth}
 }
 \value{
 phyloseq class object

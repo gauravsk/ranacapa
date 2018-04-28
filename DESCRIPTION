@@ -29,5 +29,5 @@ Imports:
     methods,
     ggdendro,
     stringr,
-    gtools
+    cluster
 Suggests: testthat

@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 .Rbuildignore
+inst/shiny-examples/explore-anacapa-output/rsconnect/*
