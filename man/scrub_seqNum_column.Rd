@@ -2,14 +2,19 @@
 % Please edit documentation in R/input_file_validators.R
 \name{scrub_seqNum_column}
 \alias{scrub_seqNum_column}
-\title{scrub_seqNum_col takes one biom table as its input, and if it include
+\title{Remove "xxx_seq_number" column from ana_out file if it exists
+takes one biom table as its input, and if it include
 a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 any longer}
 \usage{
 scrub_seqNum_column(ana_out)
 }
+\value{
+ana_out file, with "xxx_seq_number" column removed (if it existed)
+}
 \description{
-scrub_seqNum_col takes one biom table as its input, and if it include
+Remove "xxx_seq_number" column from ana_out file if it exists
+takes one biom table as its input, and if it include
 a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 any longer
 }

@@ -27,5 +27,7 @@ Imports:
     scales,
     heatmaply,
     methods,
-    ggdendro
+    ggdendro,
+    stringr,
+    gtools
 Suggests: testthat

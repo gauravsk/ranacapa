@@ -2,11 +2,15 @@
 % Please edit documentation in R/input_file_validators.R
 \name{validate_input_biom}
 \alias{validate_input_biom}
-\title{validate_input_biom takes one biom table as its input, and verfies that it meets
+\title{Verify that the input ana_out file and the input mapping file meets specificationss
+validate_input_biom takes one biom table as its input, and verfies that it meets
 the expected standards.
 The standards incude:
 1. Column names exist.
-2. One of the columns is named "sum.taxonomy"}
+2. One of the columns is named "sum.taxonomy"
+3. The "xxx_seq_number" column, if it ever existed, is removed
+4. All columns apart from sum.taxonomy should be numeric
+5. All columns apart from sum.taxonomy should have corresponding row in metadata file}
 \usage{
 validate_input_biom(ana_out, mapping_file)
 }
@@ -16,11 +20,15 @@ validate_input_biom(ana_out, mapping_file)
 \item{mapping_file}{Qiime-style mapping}
 }
 \description{
+Verify that the input ana_out file and the input mapping file meets specificationss
 validate_input_biom takes one biom table as its input, and verfies that it meets
 the expected standards.
 The standards incude:
 1. Column names exist.
 2. One of the columns is named "sum.taxonomy"
+3. The "xxx_seq_number" column, if it ever existed, is removed
+4. All columns apart from sum.taxonomy should be numeric
+5. All columns apart from sum.taxonomy should have corresponding row in metadata file
 }
 \author{
 Gaurav Kandlikar
