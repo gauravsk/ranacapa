@@ -96,21 +96,6 @@ server <- function(input, output)({
   })
 
 
-
-  file_checker <- reactive({
-    tryCatch({validate_input_biom(anacapa_output(), mapping_file())
-      T },
-      error=function(e) F)
-  })
-
-  # NOTE! This should be better, should actually return the text of the error
-  # output$fileStatus <- renderText({
-  #   if(!file_checker()) {
-  #     "Please recheck your files!"
-  #   } else {
-  #     "Congrats, your files look good to go!"
-  #   }
-  # })
   output$fileStatus <- renderText({
     validate_input_biom(anacapa_output(), mapping_file())
   })
