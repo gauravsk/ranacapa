@@ -1,3 +1,4 @@
+#' Run the shiny app!
 #' @export
 runExample <- function() {
   appDir <- system.file("shiny-examples", "explore-anacapa-output", package = "ranacapa")

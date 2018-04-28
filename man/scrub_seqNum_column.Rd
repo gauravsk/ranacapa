@@ -9,6 +9,9 @@ any longer}
 \usage{
 scrub_seqNum_column(ana_out)
 }
+\arguments{
+\item{ana_out}{OTU table from Anacapa}
+}
 \value{
 ana_out file, with "xxx_seq_number" column removed (if it existed)
 }

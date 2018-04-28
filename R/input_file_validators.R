@@ -3,7 +3,7 @@
 #' a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 #' any longer
 #'
-#' @param ana_out
+#' @param ana_out OTU table from Anacapa
 #' @author Gaurav Kandlikar
 #' @return ana_out file, with "xxx_seq_number" column removed (if it existed)
 scrub_seqNum_column <- function(ana_out) {

@@ -2,6 +2,7 @@
 #' @param physeq A phyloseq class object to be rarefied
 #' @param sample_size Desired depth of rarefaction
 #' @param replicates Desired number of times to resample from community
+#' @param ... Other options for phyloseq function rarefy_even_depth
 #' @return phyloseq class object
 #' @author Gaurav Kandlikar
 
