@@ -46,7 +46,9 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
 
   mainPanel(
     tabsetPanel(
-      tabPanel("About", value=1, helpText("Select a biom table and a metadata file")),
+      tabPanel("About", value=1,
+               helpText("Select a biom table and a metadata file"),
+               textOutput("fileStatus")),
       tabPanel("View OTU table", value=2,
                h3("Please verify your input biom table (unrarefied)"),
                dataTableOutput("print_biom")),

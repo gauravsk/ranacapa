@@ -70,13 +70,18 @@ server <- function(input, output)({
   })
 
   ########################################################
-  # Read in data files and make the physeq object --------
+  # Read in data files, validate and make the physeq object --------
   ########################################################
   anacapa_output <- reactive({
     if(input$mode == "Custom") {
-      read.table(input$in_biom$datapath, header = 1, sep = "\t", stringsAsFactors = F)
+      read.table(input$in_biom$datapath, header = 1,
+                 sep = "\t", stringsAsFactors = F) %>%
+        scrub_seqNum_column() %>%
+        group_anacapa_by_taxonomy()
     } else {
-      readRDS("data/demo_biomdata.Rds")
+      readRDS("data/demo_biomdata.Rds") %>%
+        scrub_seqNum_column() %>%
+        group_anacapa_by_taxonomy()
     }
   })
 
@@ -89,6 +94,26 @@ server <- function(input, output)({
       tmf
     }
   })
+
+
+
+  file_checker <- reactive({
+    tryCatch({validate_input_biom(anacapa_output(), mapping_file())
+      T },
+      error=function(e) F)
+  })
+
+  # NOTE! This should be better, should actually return the text of the error
+  # output$fileStatus <- renderText({
+  #   if(!file_checker()) {
+  #     "Please recheck your files!"
+  #   } else {
+  #     "Congrats, your files look good to go!"
+  #   }
+  # })
+  output$fileStatus <- renderText({
+    validate_input_biom(anacapa_output(), mapping_file())
+  })
   # Make physeq object ----
   physeq <- reactive({
     convert_anacapa_to_phyloseq(ana_out = anacapa_output(), mapping_file = mapping_file())
@@ -99,7 +124,8 @@ server <- function(input, output)({
     base::colnames(mapping_file())
   })
 
-  # Panel 2: BiomTable to print ---------
+  # Panel 2:  print taxon table ---------
+
   output$print_biom <- renderDataTable({
     anacapa_output() %>% select(sum.taxonomy, everything())
   })
