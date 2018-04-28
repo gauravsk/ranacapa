@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/gauravsk/ranacapa.svg?branch=master)](https://travis-ci.org/gauravsk/ranacapa)
+
 ## ranacapa: Explore output from Anacapa in R
 
 ### How to install:
