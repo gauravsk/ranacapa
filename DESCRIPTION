@@ -28,5 +28,6 @@ Imports:
     heatmaply,
     methods,
     ggdendro,
-    stringr
+    stringr,
+    cluster
 Suggests: testthat

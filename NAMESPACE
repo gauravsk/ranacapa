@@ -19,3 +19,5 @@ importFrom("scales", "col_factor")
 importFrom("heatmaply", "heatmaply")
 # importFrom("ggdendro")
 importFrom("parallel", "mclapply")
+importFrom("cluster", "daisy")
+
