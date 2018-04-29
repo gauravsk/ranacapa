@@ -249,10 +249,10 @@ server <- function(input, output)({
     ## NOTE!
     # Think more about whether we should use physeq() or data_subset_unrare() here
     if(input$rared_taxplots == "unrarefied"){
-      plot_bar(physeq(), fill = input$taxon_level)
+      plot_bar(physeq(), fill = input$taxon_level) + theme_bw() + theme_ranacapa()
       ggplotly()
     } else{
-      plot_bar(data_subset(), fill = input$taxon_level)
+      plot_bar(data_subset(), fill = input$taxon_level) + theme_bw() + theme_ranacapa()
       ggplotly()
     }
   })
