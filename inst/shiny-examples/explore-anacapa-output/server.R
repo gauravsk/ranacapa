@@ -144,14 +144,14 @@ server <- function(input, output)({
   output$rarefaction_ur <- renderPlotly({
     p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
     q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() + theme_ranacapa()
+      theme_ranacapa()
     ggplotly(q)
   })
 
   output$rarefaction_r <- renderPlotly({
     p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
     q <- p +  facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() + theme_ranacapa()
+      theme_ranacapa()
     ggplotly(tooltip = c("Sample", input$var))
   })
 
@@ -161,7 +161,7 @@ server <- function(input, output)({
     color <- "black"; shape <- "circle"
     colorvecname = "color"; shapevecname = "shape"
     p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype, color = colorvecname, shape = shapevecname)
-    q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) + theme_bw() +
+    q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
       xlab(paste(input$divtype, "Diversity")) + theme_ranacapa() + theme(legend.position = "none")
     ggplotly(tooltip = c("x", "value"))
   })
@@ -189,7 +189,7 @@ server <- function(input, output)({
     d <- distance(data_subset(), method=input$dissimMethod)
     ord <- ordinate(data_subset(), method = "MDS", distance = d)
     nmdsplot <- plot_ordination(data_subset(), ord, input$var, color = input$var) +
-      theme_bw() +  # stat_ellipse(type = "t", geom = "polygon", alpha = 0.2) +
+      # stat_ellipse(type = "t", geom = "polygon", alpha = 0.2) +
       ggtitle(paste(input$var, "NMDS; dissimilarity method:",
                     tools::toTitleCase(input$dissimMethod))) +
       theme(plot.title = element_text(hjust = 0.5)) +
@@ -249,10 +249,10 @@ server <- function(input, output)({
     ## NOTE!
     # Think more about whether we should use physeq() or data_subset_unrare() here
     if(input$rared_taxplots == "unrarefied"){
-      plot_bar(physeq(), fill = input$taxon_level) + theme_bw() + theme_ranacapa()
+      plot_bar(physeq(), fill = input$taxon_level) + theme_ranacapa()
       ggplotly()
     } else{
-      plot_bar(data_subset(), fill = input$taxon_level) + theme_bw() + theme_ranacapa()
+      plot_bar(data_subset(), fill = input$taxon_level) + theme_ranacapa()
       ggplotly()
     }
   })
