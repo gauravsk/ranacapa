@@ -2,21 +2,21 @@
 % Please edit documentation in R/input_file_validators.R
 \name{scrub_seqNum_column}
 \alias{scrub_seqNum_column}
-\title{Remove "xxx_seq_number" column from ana_out file if it exists
+\title{Remove "xxx_seq_number" column from ana_taxon_table file if it exists
 takes one biom table as its input, and if it include
 a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 any longer}
 \usage{
-scrub_seqNum_column(ana_out)
+scrub_seqNum_column(ana_taxon_table)
 }
 \arguments{
-\item{ana_out}{OTU table from Anacapa}
+\item{ana_taxon_table}{OTU table from Anacapa}
 }
 \value{
-ana_out file, with "xxx_seq_number" column removed (if it existed)
+ana_taxon_table file, with "xxx_seq_number" column removed (if it existed)
 }
 \description{
-Remove "xxx_seq_number" column from ana_out file if it exists
+Remove "xxx_seq_number" column from ana_taxon_table file if it exists
 takes one biom table as its input, and if it include
 a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 any longer

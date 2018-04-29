@@ -24,7 +24,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
     conditionalPanel(condition="input.tabselected == 3",
                      radioButtons("rare_method", "Choose whether you would like to pick a custom rarefaction depth,
                                   or whether samples should be rarefied to the minimum number of sequences in any single sample",
-                                  choices = c("custom", "minimum")),
+                                  choices = c("custom", "minimum", "none")),
                      uiOutput("rare_depth")),
      # On panel 3, also ask how many replicate rarefactions should be done
     conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_reps")),

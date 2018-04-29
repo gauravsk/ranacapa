@@ -59,14 +59,17 @@ server <- function(input, output)({
   output$rare_depth <- renderUI({
     if(input$rare_method == "custom"){
       sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
-                  value = 2000)} else {
+                  value = 2000)} else if (input$rare_method == "minimum") {
                     radioButtons("rarefaction_depth", label = "The minimum number of reads in any single plot will be selected:",
-                                 choices = anacapa_output() %>% select_if(is.numeric) %>% colSums() %>% min()
-                    )
-                  }
+                                 choices = anacapa_output() %>% select_if(is.numeric) %>% colSums() %>% min())
+                  } else {}
   })
   output$rare_reps <- renderUI({
-    sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
+    if(!(input$rare_method == "none")){
+        sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
+    } else {
+
+      }
   })
 
   ########################################################
@@ -95,11 +98,11 @@ server <- function(input, output)({
 
 
   output$fileStatus <- renderText({
-    validate_input_biom(anacapa_output(), mapping_file())
+    validate_input_files(anacapa_output(), mapping_file())
   })
   # Make physeq object ----
   physeq <- reactive({
-    convert_anacapa_to_phyloseq(ana_out = anacapa_output(), mapping_file = mapping_file())
+    convert_anacapa_to_phyloseq(ana_taxon_table = anacapa_output(), metadata_file = mapping_file())
   })
 
   # Make the object heads, that has the column names in the metadata file
@@ -127,9 +130,14 @@ server <- function(input, output)({
 
   # rarefy the subsetted dataset
   data_subset <- reactive({
+    if(!(input$rare_method == "none")){
+
     custom_rarefaction(data_subset_unrare(),
                        sample_size = input$rarefaction_depth,
                        replicates = input$rarefaction_reps)
+    } else {
+      data_subset_unrare()
+    }
   })
 
   # Rarefaction curve before and after rarefaction
@@ -244,7 +252,8 @@ server <- function(input, output)({
   output$pairwiseAdonis <- renderPrint({
     sdf <- as(sample_data(data_subset()), "data.frame")
     veganComm <- vegan_otu(data_subset())
-    pairwise.adonis(veganComm,getElement(sdf, input$var),sim.method = 'jaccard')
+    pairwise_adonis(veganComm,getElement(sdf, input$var),
+                    sim_method = input$dissimMethod)
   })
 
 

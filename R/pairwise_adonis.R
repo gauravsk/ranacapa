@@ -5,37 +5,34 @@
 #'
 #'@param x Data frame (the community table).
 #'@param factors Vector (a column or vector with the levels to be compared pairwise).
-#'@param sim.function Function used to calculate the similarity matrix,
-#' one of 'daisy' or 'vegdist' default is 'vegdist'.
-#'@param sim.method Similarity method from daisy or vegdist, default is 'bray'
-#'@param p.adjust.m The p.value correction method, one of the methods supported by p.adjust(),
+#'@param sim_method Similarity method from vegdist, default is 'bray'
+#'@param p_adjust_m The p.value correction method, one of the methods supported by p.adjust(),
 #' default is 'bonferroni'.
 #'@param reduce String. Restrict comparison to pairs including these factors. If more than one factor, separate by pipes like:  reduce = 'setosa|versicolor'
 #'@return Table with the pairwise factors, F-values, R^2, p.value and adjusted p.value.
 #'@author Pedro Martinez Arbizu
 #'@examples
 #' data(iris)
-#' pairwise.adonis(iris[,1:4],iris$Species)
+#' pairwise_adonis(iris[,1:4],iris$Species)
 #'
-#' pairwise.adonis(iris[,1:4],iris$Species,reduce = 'setosa')
+#' pairwise_adonis(iris[,1:4],iris$Species,reduce = 'setosa')
 #'
 #'# similarity euclidean from vegdist and holm correction
-#' pairwise.adonis(x=iris[,1:4],factors=iris$Species,sim.function='vegdist',
-#' sim.method='euclidian',p.adjust.m='holm')
+#' pairwise_adonis(x=iris[,1:4],factors=iris$Species,
+#' sim_method='euclidian',p_adjust_m='holm')
 #'
 #'#similarity manhattan from daisy and bonferroni correction
-#' pairwise.adonis(x=iris[,1:4],factors=iris$Species,sim.function='daisy',
-#' sim.method='manhattan',p.adjust.m='bonferroni')
-#'@export pairwise.adonis
+#' pairwise_adonis(x=iris[,1:4],factors=iris$Species,
+#' sim_method='manhattan',p_adjust_m='bonferroni')
+#'@export pairwise_adonis
 #'@importFrom stats p.adjust
 #'@importFrom utils combn
 #'@importFrom vegan adonis vegdist
-#'@importFrom cluster daisy
 
 
 
-pairwise.adonis <- function(x, factors, sim.function = "vegdist", sim.method = "bray",
-                            p.adjust.m = "bonferroni", reduce = NULL) {
+pairwise_adonis <- function(x, factors, sim_method = "bray",
+                            p_adjust_m = "bonferroni", reduce = NULL) {
 
   co <- combn(unique(as.character(factors)), 2)
   pairs <- c()
@@ -45,12 +42,8 @@ pairwise.adonis <- function(x, factors, sim.function = "vegdist", sim.method = "
 
 
   for (elem in 1:ncol(co)) {
-    if (sim.function == "daisy") {
-      x1 = daisy(x[factors %in% c(co[1, elem], co[2, elem]), ], metric = sim.method)
-    } else {
-      x1 = vegdist(x[factors %in% c(co[1, elem], co[2, elem]), ],
-                   method = sim.method)
-    }
+    x1 <- vegdist(x[factors %in% c(co[1, elem], co[2, elem]), ],
+                  method = sim_method)
 
     ad <- adonis(x1 ~ factors[factors %in% c(co[1, elem], co[2, elem])])
     pairs <- c(pairs, paste(co[1, elem], "vs", co[2, elem]))
@@ -58,9 +51,9 @@ pairwise.adonis <- function(x, factors, sim.function = "vegdist", sim.method = "
     R2 <- c(R2, ad$aov.tab[1, 5])
     p.value <- c(p.value, ad$aov.tab[1, 6])
   }
-  p.adjusted <- p.adjust(p.value, method = p.adjust.m)
+  p.adjusted <- p.adjust(p.value, method = p_adjust_m)
 
-  sig = c(rep("", length(p.adjusted)))
+  sig <- c(rep("", length(p.adjusted)))
   sig[p.adjusted <= 0.05] <- "."
   sig[p.adjusted <= 0.01] <- "*"
   sig[p.adjusted <= 0.001] <- "**"
@@ -69,9 +62,9 @@ pairwise.adonis <- function(x, factors, sim.function = "vegdist", sim.method = "
 
   if (!is.null(reduce)) {
     pairw.res <- subset(pairw.res, grepl(reduce, pairs))
-    pairw.res$p.adjusted <- p.adjust(pairw.res$p.value, method = p.adjust.m)
+    pairw.res$p.adjusted <- p.adjust(pairw.res$p.value, method = p_adjust_m)
 
-    sig = c(rep("", length(pairw.res$p.adjusted)))
+    sig <- c(rep("", length(pairw.res$p.adjusted)))
     sig[pairw.res$p.adjusted <= 0.05] <- "."
     sig[pairw.res$p.adjusted <= 0.01] <- "*"
     sig[pairw.res$p.adjusted <= 0.001] <- "**"
@@ -81,19 +74,3 @@ pairwise.adonis <- function(x, factors, sim.function = "vegdist", sim.method = "
   class(pairw.res) <- c("pwadonis", "data.frame")
   return(pairw.res)
 }
-
-
-#' Summarize the results of pairwise_adonis
-#' @param object output from pairwise_adonis
-#' @param ... other options for print
-summary.pwadonis = function(object, ...) {
-  cat("Result of pairwise.adonis:\n")
-  cat("\n")
-  print(object, ...)
-  cat("\n")
-  cat("Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n")
-}
-## end of method summary
-
-
-
