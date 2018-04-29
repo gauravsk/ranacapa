@@ -1,6 +1,6 @@
 #' Run the shiny app!
 #' @export
-runExample <- function() {
+runRanacapaApp <- function() {
   appDir <- system.file("shiny-examples", "explore-anacapa-output", package = "ranacapa")
   if (appDir == "") {
     stop("Could not find example directory. Try re-installing `ranacapa`.", call. = FALSE)
