@@ -1,6 +1,5 @@
-export(pairwise.adonis)
+export(pairwise_adonis)
 export(runExample)
-importFrom(cluster,daisy)
 importFrom(stats,p.adjust)
 importFrom(utils,combn)
 importFrom(vegan,adonis)
@@ -26,5 +25,4 @@ importFrom("scales", "col_factor")
 importFrom("heatmaply", "heatmaply")
 # importFrom("ggdendro")
 importFrom("parallel", "mclapply")
-importFrom("cluster", "daisy")
 

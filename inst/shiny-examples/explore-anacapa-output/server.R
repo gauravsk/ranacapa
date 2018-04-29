@@ -252,7 +252,8 @@ server <- function(input, output)({
   output$pairwiseAdonis <- renderPrint({
     sdf <- as(sample_data(data_subset()), "data.frame")
     veganComm <- vegan_otu(data_subset())
-    pairwise.adonis(veganComm,getElement(sdf, input$var),sim.method = input$dissimMethod)
+    pairwise_adonis(veganComm,getElement(sdf, input$var),
+                    sim_method = input$dissimMethod)
   })
 
 
