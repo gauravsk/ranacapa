@@ -99,7 +99,7 @@ server <- function(input, output)({
   })
   # Make physeq object ----
   physeq <- reactive({
-    convert_anacapa_to_phyloseq(ana_out = anacapa_output(), mapping_file = mapping_file())
+    convert_anacapa_to_phyloseq(ana_taxon_table = anacapa_output(), mapping_file = mapping_file())
   })
 
   # Make the object heads, that has the column names in the metadata file

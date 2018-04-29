@@ -54,7 +54,4 @@ validate_input_files <- function(ana_taxon_table, metadata_file) {
   }
 
 
-  cat("success!")
-
-
 }

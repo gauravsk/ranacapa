@@ -59,11 +59,11 @@ testthat::test_that("various broken versions of input files break the validator"
                "Please make sure that each sample in your biom table has a corresponding row in the mapping file!")
 })
 
-testthat::test_that("clean versions of input files return success", {
+testthat::test_that("clean versions of input files return null", {
 
-  expect_output(validate_input_files(good_taxon_table, good_maps), "success!")
+  expect_null(validate_input_files(good_taxon_table, good_maps))
 
   # It should be OK for metadata file to have extra information
-  expect_output(validate_input_files(good_taxon_table, maps_extra_site), "success!")
+  expect_null(validate_input_files(good_taxon_table, maps_extra_site))
 
 })
