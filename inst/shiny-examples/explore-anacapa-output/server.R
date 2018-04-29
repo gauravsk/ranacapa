@@ -144,16 +144,25 @@ server <- function(input, output)({
   output$rarefaction_ur <- renderPlotly({
     p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
     q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-      theme_ranacapa()
-    ggplotly(q)
+      theme_ranacapa() + theme(axis.title = element_blank())
+    gp <- ggplotly(tooltip = c("Sample", input$var)) %>%
+      layout(yaxis = list(title = "Species Richness", titlefont = list(size = 16)), xaxis = list(title = "Sequence Sample Size", titlefont = list(size = 16)), margin = list(l = 100, b = 60))
+    gp
   })
 
   output$rarefaction_r <- renderPlotly({
     p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
     q <- p +  facet_wrap(as.formula(paste("~", input$var))) +
-      theme_ranacapa()
-    ggplotly(tooltip = c("Sample", input$var))
+      theme_ranacapa() + theme(axis.text.x = element_text(angle = 45))
+    gp <- ggplotly(tooltip = c("Sample", input$var))
+    gp[['x']][['layout']][['annotations']][[2]][['x']] <- -0.07  # adjust y axis title (actually an annotation)
+    gp[['x']][['layout']][['annotations']][[1]][['y']] <- -0.15  # adjust x axis title (actually an annotation)
+    # this doesn't work right now, but still need to figure out how to not cut off legend title
+    # gp[['x']][['layout']][['annotations']][[3]][['x']] <- 0.23  # adjust legend title (actually an annotation)
+    gp %>% layout(margin = list(l = 70, b = 100, r = 20))
   })
+
+
 
   # Panel 4: Alpha diversity ------------
   # Alpha diversity boxplots
@@ -251,15 +260,15 @@ server <- function(input, output)({
     if(input$rared_taxplots == "unrarefied"){
       plot_bar(physeq(), fill = input$taxon_level) + theme_ranacapa() +
         theme(axis.text.x = element_text(angle = 45)) + theme(axis.title = element_blank())
-      gp <- ggplotly()
-      gp <- layout(gp, yaxis = list(title = "Abundance"), xaxis = list(title = "Sample"),
-             margin = list(l = 100, b = 100))
+      gp <- ggplotly() %>%
+        layout(yaxis = list(title = "Abundance", titlefont = list(size = 16)),
+               xaxis = list(title = "Sample", titlefont = list(size = 16)),
+               margin = list(l = 100, b = 100))
       gp
     } else{
       plot_bar(data_subset(), fill = input$taxon_level) + theme_ranacapa() +
         theme(axis.text.x = element_text(angle = 45)) + theme(axis.title = element_blank())
-      gp <- ggplotly()
-      gp <- layout(gp, yaxis = list(title = "Abundance"), xaxis = list(title = "Sample"),
+      gp <- ggplotly() %>% layout(yaxis = list(title = "Abundance"), xaxis = list(title = "Sample"),
                    margin = list(l = 100, b = 100))
       gp
     }
