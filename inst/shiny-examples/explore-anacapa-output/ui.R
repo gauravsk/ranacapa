@@ -102,8 +102,8 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
 
       # beta Diversity panels - first, just plots
       tabPanel("Beta Diversity exploration", value = 5,
-               plotlyOutput("betanmdsplotly")), # ,
-               # plotOutput("dissimMap")),
+               plotlyOutput("betanmdsplotly"),
+               plotOutput("dissimMap")),
 
       # beta Diversity panels- second, just stats
       tabPanel("Beta Diversity stats", value = 6,

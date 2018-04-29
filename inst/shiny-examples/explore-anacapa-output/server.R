@@ -203,29 +203,13 @@ server <- function(input, output)({
   output$dissimMap <- renderPlot({
     d <- distance(data_subset(), method=input$dissimMethod)
 
-    # Network map ---------
-    ig <- make_network(data_subset(),
-                       distance=function(x){vegan::vegdist(x, input$dissimMethod)}, max.dist=0.9)
-
-    igp <-  plot_network(ig, data_subset(), color=input$var, line_weight=0.9, label=NULL) +
-      theme_bw(base_size = 18)
-
     # Ward linkage map --------
     wcluster <- as.dendrogram(hclust(d, method = "ward.D2"))
     envtype <- get_variable(data_subset(), input$var)
     tipColor <- col_factor(rainbow(10), levels = levels(envtype))(envtype)
     wl <- ggdendro::ggdendrogram(wcluster, theme_dendro = FALSE, color = "red")  +
       theme_bw(base_size = 18) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-    # Big old heat map -----------
-    heat <- ggplot(data = melt(as.matrix(d)), aes(x=Var1, y=Var2, fill=value)) +
-      geom_tile() + theme_bw(base_size = 18) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-    # Plot them all out ------
-    gridExtra::grid.arrange(igp, wl, heat, ncol = 1, heights = c(3,3,3,4))
-
+    wl
 
   }, height = 2000, width = 1000 )
 
