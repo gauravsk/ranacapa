@@ -143,8 +143,7 @@ server <- function(input, output)({
   # Rarefaction curve before and after rarefaction
   output$rarefaction_ur <- renderPlotly({
     p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
-    q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-      theme_ranacapa() + theme(axis.title = element_blank())
+    q <- p + theme_ranacapa() + theme(axis.title = element_blank())
     gp <- ggplotly(tooltip = c("Sample", input$var)) %>%
       layout(yaxis = list(title = "Species Richness", titlefont = list(size = 16)), xaxis = list(title = "Sequence Sample Size", titlefont = list(size = 16)), margin = list(l = 100, b = 60))
     gp
@@ -171,9 +170,13 @@ server <- function(input, output)({
     colorvecname = "color"; shapevecname = "shape"
     p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype, color = colorvecname, shape = shapevecname)
     q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
-      xlab(paste(input$divtype, "Diversity")) + theme_ranacapa() + theme(legend.position = "none")
-    ggplotly(tooltip = c("x", "value"))
+      theme_ranacapa() + theme(legend.position = "none") + theme(axis.title = element_blank())
+    gp <- ggplotly(tooltip = c("x", "value")) %>%
+      layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
+             xaxis = list(title = input$var, titlefont = list(size = 16)),
+             margin = list(l = 60, b = 60))
   })
+
 
   # Alpha diversity aov generation
   physeq.alpha.anova <- reactive({
