@@ -31,24 +31,24 @@ server <- function(input, output)({
     }
   })
 
-  # RenderUI for which_variable_r, gets used in panels 3,4,5,6
+  # RenderUI for which_variable_r, gets used in Panels 3,4,5,6
   output$which_variable_r <- renderUI({
     selectInput("var", "Select the variable", choices = heads())
   })
 
-  # RenderUI for which_divtype, for Alpha Diversity panel 3
+  # RenderUI for which_divtype, for Alpha Diversity Panel 4
   output$which_divtype <- renderUI({
     radioButtons("divtype", label = "Observed or Shannon diversity?",
                  choices = c("Observed", "Shannon"))
   })
 
-  # RenderUI for which_dissim, used for beta diversity panel 4,5
+  # RenderUI for which_dissim, used for Beta Diversity Panel 5,6
   output$which_dissim <- renderUI({
     radioButtons("dissimMethod", "Which type of distance metric would you like?",
                  choices = c("bray", "jaccard"))
   })
 
-  # RenderUI for which_taxon_level, used for barplot and heatmap in panels 7,8
+  # RenderUI for which_taxon_level, used for barplot and heatmap in Panels 7,8
   output$which_taxon_level <- renderUI({
     radioButtons("taxon_level", "Pick the taxonomic level for making the plot",
                  choices = c("Phylum", "Class", "Order", "Family", "Genus", "Species"))
@@ -110,7 +110,7 @@ server <- function(input, output)({
     base::colnames(mapping_file())
   })
 
-  # Panel 2:  print taxon table ---------
+  # Panel 2:  Print OTU table ---------
 
   output$print_biom <- renderDataTable({
     anacapa_output() %>% select(sum.taxonomy, everything())
@@ -155,8 +155,8 @@ server <- function(input, output)({
     ggplotly(tooltip = c("Sample", input$var))
   })
 
-  # Panel 4: Alpha diversity
-  # Alpha diverstity boxplots
+  # Panel 4: Alpha diversity ------------
+  # Alpha diversity boxplots
   output$alpharichness <- renderPlotly({
     color <- "black"; shape <- "circle"
     colorvecname = "color"; shapevecname = "shape"
@@ -183,7 +183,7 @@ server <- function(input, output)({
     broom::tidy(TukeyHSD(physeq.alpha.anova()))
   }, digits = 4)
 
-  # Panel 5: Beta Diversity plots
+  # Panel 5: Beta Diversity exploration plots ------------
   # NMDS plotly
   output$betanmdsplotly <- renderPlotly({
     d <- distance(data_subset(), method=input$dissimMethod)
@@ -199,16 +199,17 @@ server <- function(input, output)({
 
 
 
-  # Other beta diversity plots --------
+  # Other beta diversity plot
   output$dissimMap <- renderPlot({
     d <- distance(data_subset(), method=input$dissimMethod)
 
-    # Ward linkage map --------
+    # Ward linkage map
     wcluster <- as.dendrogram(hclust(d, method = "ward.D2"))
     envtype <- get_variable(data_subset(), input$var)
     tipColor <- col_factor(rainbow(10), levels = levels(envtype))(envtype)
     wl <- ggdendro::ggdendrogram(wcluster, theme_dendro = FALSE, color = "red")  +
       theme_bw(base_size = 18) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    # Plot it
     wl
 
   }, height = 2000, width = 1000 )
@@ -242,7 +243,7 @@ server <- function(input, output)({
 
 
 
-  # Panel 7: Taxonomy-by-site interactive Barplot -------
+  # Panel 7: Taxonomy-by-site interactive barplot -------
   output$tax_bar <- renderPlotly({
 
     ## NOTE!
