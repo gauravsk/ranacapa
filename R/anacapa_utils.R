@@ -21,11 +21,11 @@ convert_anacapa_to_phyloseq <- function(ana_out, mapping_file) {
   # Reorder the columns (sites) for ease of displaying later
   ana_out2 <- ana_out2[ , order(colnames(ana_out2))]
 
-  # Conver the matrix into a phyloseq otu_table object, with taxa as the rows
+  # Convert the matrix into a phyloseq otu_table object, with taxa as the rows
   ana_out_physeq <- otu_table(ana_out2, taxa_are_rows = TRUE)
 
   # Extract the rownames of the matrix above- this has the full taxonomic path.
-  # Split the taxonomic path on semi colons, and turn the resulting matrix into
+  # Split the taxonomic path on semicolons, and turn the resulting matrix into
   # a phyloseq tax_table object
   taxon_names <- colsplit(rownames(ana_out2), ";",
                           names = c("Phylum","Class","Order","Family","Genus","Species")) %>% as.matrix
