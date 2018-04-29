@@ -4,10 +4,10 @@
 \alias{group_anacapa_by_taxonomy}
 \title{Takes a site-abundance table from Anacapa, and summarizes to each unique taxon in the sum.taxonomy column}
 \usage{
-group_anacapa_by_taxonomy(ana_out)
+group_anacapa_by_taxonomy(ana_taxon_table)
 }
 \arguments{
-\item{ana_out}{OTU table from Anacapa}
+\item{ana_taxon_table}{OTU table from Anacapa}
 }
 \description{
 Takes a site-abundance table from Anacapa, and summarizes to each unique taxon in the sum.taxonomy column

@@ -4,12 +4,12 @@
 \alias{convert_anacapa_to_phyloseq}
 \title{Takes an site-abundance table from Anacapa, along with a qiime-style mapping file, and returns a phyloseq object}
 \usage{
-convert_anacapa_to_phyloseq(ana_out, mapping_file)
+convert_anacapa_to_phyloseq(ana_taxon_table, metadata_file)
 }
 \arguments{
-\item{ana_out}{OTU table from Anacapa}
+\item{ana_taxon_table}{OTU table from Anacapa}
 
-\item{mapping_file}{Qiime-style mapping}
+\item{metadata_file}{Qiime-style mapping}
 }
 \value{
 phyloseq class object
