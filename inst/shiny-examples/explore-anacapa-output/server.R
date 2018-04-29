@@ -95,7 +95,7 @@ server <- function(input, output)({
 
 
   output$fileStatus <- renderText({
-    validate_input_biom(anacapa_output(), mapping_file())
+    validate_input_files(anacapa_output(), mapping_file())
   })
   # Make physeq object ----
   physeq <- reactive({

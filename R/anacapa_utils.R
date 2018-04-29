@@ -3,7 +3,7 @@
 #' @author Gaurav Kandlikar
 group_anacapa_by_taxonomy <- function(ana_out) {
   ana_out %>% dplyr::filter(sum.taxonomy != "") %>% group_by(sum.taxonomy) %>%
-    summarize_if(is.numeric,sum) %>% data.frame
+    summarize_if(is.numeric,sum) %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>% data.frame
 }
 
 #' Takes an site-abundance table from Anacapa, along with a qiime-style mapping file, and returns a phyloseq object
