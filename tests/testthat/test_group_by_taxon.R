@@ -14,5 +14,7 @@ testthat::test_that("group_by_taxon is good", {
 
   expect_is(group_anacapa_by_taxonomy(biom_duplicate_taxon), "data.frame")
 
+  expect_equal((group_anacapa_by_taxonomy(biom_duplicate_taxon)),group_anacapa_by_taxonomy(biom_duplicate_taxon)) # this might be unnecessary
+
 })
 
