@@ -102,7 +102,7 @@ server <- function(input, output)({
   })
   # Make physeq object ----
   physeq <- reactive({
-    convert_anacapa_to_phyloseq(ana_taxon_table = anacapa_output(), mapping_file = mapping_file())
+    convert_anacapa_to_phyloseq(ana_taxon_table = anacapa_output(), metadata_file = mapping_file())
   })
 
   # Make the object heads, that has the column names in the metadata file
@@ -252,7 +252,7 @@ server <- function(input, output)({
   output$pairwiseAdonis <- renderPrint({
     sdf <- as(sample_data(data_subset()), "data.frame")
     veganComm <- vegan_otu(data_subset())
-    pairwise.adonis(veganComm,getElement(sdf, input$var),sim.method = 'jaccard')
+    pairwise.adonis(veganComm,getElement(sdf, input$var),sim.method = input$dissimMethod)
   })
 
 
