@@ -59,14 +59,17 @@ server <- function(input, output)({
   output$rare_depth <- renderUI({
     if(input$rare_method == "custom"){
       sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
-                  value = 2000)} else {
+                  value = 2000)} else if (input$rare_method == "minimum") {
                     radioButtons("rarefaction_depth", label = "The minimum number of reads in any single plot will be selected:",
-                                 choices = anacapa_output() %>% select_if(is.numeric) %>% colSums() %>% min()
-                    )
-                  }
+                                 choices = anacapa_output() %>% select_if(is.numeric) %>% colSums() %>% min())
+                  } else {}
   })
   output$rare_reps <- renderUI({
-    sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
+    if(!(input$rare_method == "none")){
+        sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
+    } else {
+
+      }
   })
 
   ########################################################
@@ -127,9 +130,14 @@ server <- function(input, output)({
 
   # rarefy the subsetted dataset
   data_subset <- reactive({
+    if(!(input$rare_method == "none")){
+
     custom_rarefaction(data_subset_unrare(),
                        sample_size = input$rarefaction_depth,
                        replicates = input$rarefaction_reps)
+    } else {
+      data_subset_unrare()
+    }
   })
 
   # Rarefaction curve before and after rarefaction
