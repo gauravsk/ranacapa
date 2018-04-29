@@ -6,16 +6,39 @@ group_anacapa_by_taxonomy <- function(ana_taxon_table) {
     summarize_if(is.numeric,sum) %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>% data.frame
 }
 
+
+#' Takes a continuous vector and categorizes the vector into low, medium, and high
+#' @param vec a continuous vector to categorize
+#' @return a continuous vector
+#' @author Gaurav Kandlikar
+
+categorize_continuous_vector <- function(vec) {
+  cut(vec, breaks = c(0,quantile(vec, probs = seq(from = 1/3, to = 1, by = 1/3))),
+      labels = c("low", "medium","high"), include.lowest = TRUE)
+}
+
+#' Takes a metadata file, and categorizes any continuous variable into "low, med, high"
+#' @param metadata_file a well-formatted metadata file
+#' @return a metadata file with categorical column in place of the continuous one
+#' @author Gaurav Kandlikar
+
+categorize_continuous_metadata <- function(metadata_file){
+  metadata_file %>% mutate_if(is.numeric, categorize_continuous_vector)
+}
+
 #' Takes an site-abundance table from Anacapa, along with a qiime-style mapping file, and returns a phyloseq object
 #' @param ana_taxon_table OTU table from Anacapa
 #' @param metadata_file Qiime-style mapping
 #' @return phyloseq class object
 #' @author Gaurav Kandlikar
 
-
 convert_anacapa_to_phyloseq <- function(ana_taxon_table, metadata_file) {
 
+  # validate the files
   validate_input_files(ana_taxon_table, metadata_file)
+
+  # convert any continuous metadata variables to categorical
+  metadata_file <- categorize_continuous_metadata(metadata_file)
 
   # Group the anacapa ouptut by taxonomy, if it has not yet happened, and turn it into a matrix
   ana_taxon_table2 <- group_anacapa_by_taxonomy(ana_taxon_table) %>%
