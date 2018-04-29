@@ -1,5 +1,5 @@
 export(pairwise_adonis)
-export(runExample)
+export(runRanacapaApp)
 importFrom(stats,p.adjust)
 importFrom(utils,combn)
 importFrom(vegan,adonis)
