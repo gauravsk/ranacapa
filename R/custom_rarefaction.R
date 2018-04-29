@@ -15,8 +15,9 @@ custom_rarefaction <- function(physeq, sample_size = 10000, replicates = 10, ...
   dfs <- lapply(dfs, function(x) rownames_to_column(x, var = "taxonomy"))
   dfs <- do.call(rbind.data.frame, dfs)
 
-  otu <- dfs %>% group_by(taxonomy) %>% summarize_all(funs(mean)) %>%
-    mutate_if(is.numeric, funs(round)) %>% data.frame %>%
+  otu <- dfs %>% group_by(taxonomy) %>% summarize_all(funs(sum(.)/replicates)) %>%
+    mutate_if(is.numeric, funs(round)) %>%
+    data.frame %>%
     column_to_rownames("taxonomy") %>% as.matrix
 
   OTU <- otu_table(otu, taxa_are_rows = T)
