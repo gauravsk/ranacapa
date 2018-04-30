@@ -158,7 +158,7 @@ server <- function(input, output)({
     gp[['x']][['layout']][['annotations']][[1]][['y']] <- -0.15  # adjust x axis title (actually an annotation)
     # this doesn't work right now, but still need to figure out how to not cut off legend title
     # gp[['x']][['layout']][['annotations']][[3]][['x']] <- 0.23  # adjust legend title (actually an annotation)
-    gp %>% layout(margin = list(l = 70, b = 100, r = 20))
+    gp %>% layout(margin = list(l = 80, b = 100, r = 20))
   })
 
 
