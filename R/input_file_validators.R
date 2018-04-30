@@ -7,7 +7,7 @@
 #' @author Gaurav Kandlikar
 #' @return ana_taxon_table file, with "xxx_seq_number" column removed (if it existed)
 scrub_seqNum_column <- function(ana_taxon_table) {
-  to_return <- ana_taxon_table %>% select(-matches("seq_number"))
+  to_return <- ana_taxon_table %>% dplyr::select(-dplyr::matches("seq_number"))
   return(to_return)
 }
 
@@ -44,12 +44,12 @@ validate_input_files <- function(ana_taxon_table, metadata_file) {
   }
 
   #' 4. All columns apart from sum.taxonomy should be numeric
-  if(!(all(sapply(ana_taxon_table %>% select(-sum.taxonomy), is.numeric)))) {
+  if(!(all(sapply(ana_taxon_table %>% dplyr::select(-sum.taxonomy), is.numeric)))) {
     stop("Please make sure that all columns apart from sum.taxonomy only contain numeric data!")
   }
 
   #' 5. All columns apart from sum.taxonomy should have corresponding row in metadata file
-  if(!(all(colnames(ana_taxon_table %>% select(-sum.taxonomy)) %in% metadata_file[,1]))) {
+  if(!(all(colnames(ana_taxon_table %>% dplyr::select(-sum.taxonomy)) %in% metadata_file[,1]))) {
     stop("Please make sure that each sample in your biom table has a corresponding row in the mapping file!")
   }
 
