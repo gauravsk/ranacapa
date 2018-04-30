@@ -317,7 +317,7 @@ server <- function(input, output)({
     for_hm <- for_hm %>% group_by(get(input$taxon_level)) %>% summarize_if(is.numeric, sum) %>%
       data.frame %>% column_to_rownames("get.input.taxon_level.")
     for_hm[for_hm == 0] <- NA
-    heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = T, grid_gap = 1, na.value = "white")
+    heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = F, grid_gap = 1, na.value = "white")
 
   })
 
