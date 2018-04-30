@@ -29,8 +29,12 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
      # On panel 3, also ask how many replicate rarefactions should be done
     conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_reps")),
 
-    # On panel 4 (alpha diveristy), ask whether users want observed or Shannon div stats
+    # On panel 4 (alpha diversity), ask whether users want observed or Shannon div stats
     conditionalPanel(condition="input.tabselected == 4", uiOutput("which_divtype")),
+
+    # On panel 4 (alpha diversity), ask whether users want x-axis labels rotated
+    conditionalPanel(condition="input.tabselected == 4",
+                     checkboxInput("rotate_x", label = "Select to rotate x-axis labels", value = F)),
 
     # On panel 5 (beta diersity),  ask whether users want to use NMDS or Bray disslimilarity
     conditionalPanel(condition="input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
@@ -94,8 +98,11 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                  by one of the characteristics of the plots. You can choose the characteristic from the dropdown list on the left."),
 
                plotlyOutput("alpharichness"),
-               br(),
+               br(), br(),
+               h4("Alpha Diversity AOV"),
                tableOutput("alphaDivAOV"),
+               br(),
+               h4("Alpha Diversity Tukey Tests"),
                tableOutput("alphaDivTukey"),
                h3("More resources on alpha diversity"),
                p(a("Measurements of Biodiversity", href="http://www.marinespecies.org/introduced/wiki/Measurements_of_biodiversity"))),

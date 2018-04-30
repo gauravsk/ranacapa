@@ -169,12 +169,25 @@ server <- function(input, output)({
     color <- "black"; shape <- "circle"
     colorvecname = "color"; shapevecname = "shape"
     p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype, color = colorvecname, shape = shapevecname)
-    q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
-      theme_ranacapa() + theme(legend.position = "none") + theme(axis.title = element_blank())
-    gp <- ggplotly(tooltip = c("x", "value")) %>%
-      layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
-             xaxis = list(title = input$var, titlefont = list(size = 16)),
-             margin = list(l = 60, b = 60))
+
+    if(!input$rotate_x){
+      q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
+        theme_ranacapa() + theme(legend.position = "none") + theme(axis.title = element_blank())
+      gp <- ggplotly(tooltip = c("x", "value")) %>%
+        layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
+               xaxis = list(title = input$var, titlefont = list(size = 16)),
+               margin = list(l = 60, b = 60))
+    } else {
+
+      q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
+        theme_ranacapa() + theme(legend.position = "none") + theme(axis.title = element_blank()) +
+        theme(axis.text.x = element_text(angle = 45))
+      gp <- ggplotly(tooltip = c("x", "value")) %>%
+        layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
+               xaxis = list(title = input$var, titlefont = list(size = 16)),
+               margin = list(l = 60, b = 70))
+    }
+
   })
 
 
@@ -266,7 +279,7 @@ server <- function(input, output)({
       gp <- ggplotly() %>%
         layout(yaxis = list(title = "Abundance", titlefont = list(size = 16)),
                xaxis = list(title = "Sample", titlefont = list(size = 16)),
-               margin = list(l = 100, b = 100))
+               margin = list(l = 70, b = 100))
       gp
     } else{
       plot_bar(data_subset(), fill = input$taxon_level) + theme_ranacapa() +
