@@ -1,5 +1,7 @@
 context("check that the custom rarefaction works as expected")
-
+library(dplyr)
+library(tibble)
+library(phyloseq)
 # the test data ------
 taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
                                site_1 = c(11,100),

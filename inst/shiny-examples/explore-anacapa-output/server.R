@@ -31,24 +31,24 @@ server <- function(input, output)({
     }
   })
 
-  # RenderUI for which_variable_r, gets used in panels 3,4,5,6
+  # RenderUI for which_variable_r, gets used in Panels 3,4,5,6
   output$which_variable_r <- renderUI({
     selectInput("var", "Select the variable", choices = heads())
   })
 
-  # RenderUI for which_divtype, for Alpha Diversity panel 3
+  # RenderUI for which_divtype, for Alpha Diversity Panel 4
   output$which_divtype <- renderUI({
     radioButtons("divtype", label = "Observed or Shannon diversity?",
                  choices = c("Observed", "Shannon"))
   })
 
-  # RenderUI for which_dissim, used for beta diversity panel 4,5
+  # RenderUI for which_dissim, used for Beta Diversity Panel 5,6
   output$which_dissim <- renderUI({
     radioButtons("dissimMethod", "Which type of distance metric would you like?",
                  choices = c("bray", "jaccard"))
   })
 
-  # RenderUI for which_taxon_level, used for barplot and heatmap in panels 7,8
+  # RenderUI for which_taxon_level, used for barplot and heatmap in Panels 7,8
   output$which_taxon_level <- renderUI({
     radioButtons("taxon_level", "Pick the taxonomic level for making the plot",
                  choices = c("Phylum", "Class", "Order", "Family", "Genus", "Species"))
@@ -110,7 +110,7 @@ server <- function(input, output)({
     base::colnames(mapping_file())
   })
 
-  # Panel 2:  print taxon table ---------
+  # Panel 2:  Print OTU table ---------
 
   output$print_biom <- renderDataTable({
     anacapa_output() %>% select(sum.taxonomy, everything())
@@ -143,31 +143,51 @@ server <- function(input, output)({
   # Rarefaction curve before and after rarefaction
   output$rarefaction_ur <- renderPlotly({
     p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
-    q <- p + # facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() + theme_ranacapa()
-    ggplotly(q)
+    q <- p + theme_ranacapa() + theme(axis.title = element_blank())
+    gp <- ggplotly(tooltip = c("Sample", input$var)) %>%
+      layout(yaxis = list(title = "Species Richness", titlefont = list(size = 16)), xaxis = list(title = "Sequence Sample Size", titlefont = list(size = 16)), margin = list(l = 100, b = 60))
+    gp
   })
 
   output$rarefaction_r <- renderPlotly({
     p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
     q <- p +  facet_wrap(as.formula(paste("~", input$var))) +
-      theme_bw() + theme_ranacapa()
-    ggplotly(tooltip = c("Sample", input$var))
+      theme_ranacapa() + theme(axis.text.x = element_text(angle = 45))
+    gp <- ggplotly(tooltip = c("Sample", input$var))
+    gp[['x']][['layout']][['annotations']][[2]][['x']] <- -0.07  # adjust y axis title (actually an annotation)
+    gp[['x']][['layout']][['annotations']][[1]][['y']] <- -0.15  # adjust x axis title (actually an annotation)
+    # this doesn't work right now, but still need to figure out how to not cut off legend title
+    # gp[['x']][['layout']][['annotations']][[3]][['x']] <- 0.23  # adjust legend title (actually an annotation)
+    gp %>% layout(margin = list(l = 80, b = 100, r = 20))
   })
 
-  # Panel 4: Alpha diversity
-  # Alpha diverstity boxplots
+
+
+  # Panel 4: Alpha diversity ------------
+  # Alpha diversity boxplots
   output$alpharichness <- renderPlotly({
     color <- "black"; shape <- "circle"
     colorvecname = "color"; shapevecname = "shape"
-    p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype, color = colorvecname, shape = shapevecname)
-    q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) + theme_bw() +
-      xlab(paste(input$divtype, "Diversity")) + theme_ranacapa() + theme(legend.position = "none")
-    ggplotly(tooltip = c("x", "value"))
+    p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype,
+                       color = colorvecname, shape = shapevecname)
+
+    alpha_angle <- reactive({
+      if(!input$rotate_x){ 0 } else { 45 }
+    })
+
+    q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
+      theme_ranacapa() + theme(legend.position = "none") +
+      theme(axis.title = element_blank()) +
+      theme(axis.text.x = element_text(angle = alpha_angle()))
+    gp <- ggplotly(tooltip = c("x", "value")) %>%
+      layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
+             xaxis = list(title = input$var, titlefont = list(size = 16)),
+             margin = list(l = 60, b = 70))
   })
 
+
   # Alpha diversity aov generation
-  physeq.alpha.anova <- reactive({
+  alpha_anova <- reactive({
     alpha.diversity <- estimate_richness(data_subset(), measures = c("Observed", "Shannon"))
     data <- cbind(sample_data(data_subset()), alpha.diversity)
     aov(as.formula(paste(input$divtype, "~" , input$var)), data)
@@ -175,21 +195,21 @@ server <- function(input, output)({
 
   # Alpha diversity AOV print
   output$alphaDivAOV <- renderTable({
-    broom::tidy(physeq.alpha.anova())
+    broom::tidy(alpha_anova())
   }, digits = 4)
 
   # Alpha Diversity tukey
   output$alphaDivTukey <- renderTable({
-    broom::tidy(TukeyHSD(physeq.alpha.anova()))
+    broom::tidy(TukeyHSD(alpha_anova()))
   }, digits = 4)
 
-  # Panel 5: Beta Diversity plots
+  # Panel 5: Beta Diversity exploration plots ------------
   # NMDS plotly
   output$betanmdsplotly <- renderPlotly({
     d <- distance(data_subset(), method=input$dissimMethod)
     ord <- ordinate(data_subset(), method = "MDS", distance = d)
     nmdsplot <- plot_ordination(data_subset(), ord, input$var, color = input$var) +
-      theme_bw() +  # stat_ellipse(type = "t", geom = "polygon", alpha = 0.2) +
+      # stat_ellipse(type = "t", geom = "polygon", alpha = 0.2) +
       ggtitle(paste(input$var, "NMDS; dissimilarity method:",
                     tools::toTitleCase(input$dissimMethod))) +
       theme(plot.title = element_text(hjust = 0.5)) +
@@ -199,35 +219,19 @@ server <- function(input, output)({
 
 
 
-  # Other beta diversity plots --------
+  # Other beta diversity plot
   output$dissimMap <- renderPlot({
     d <- distance(data_subset(), method=input$dissimMethod)
 
-    # Network map ---------
-    ig <- make_network(data_subset(),
-                       distance=function(x){vegan::vegdist(x, input$dissimMethod)}, max.dist=0.9)
-
-    igp <-  plot_network(ig, data_subset(), color=input$var, line_weight=0.9, label=NULL) +
-      theme_bw(base_size = 18)
-
-    # Ward linkage map --------
+    # Ward linkage map
     wcluster <- as.dendrogram(hclust(d, method = "ward.D2"))
-    envtype <- get_variable(data_subset(), input$var)
-    tipColor <- col_factor(rainbow(10), levels = levels(envtype))(envtype)
     wl <- ggdendro::ggdendrogram(wcluster, theme_dendro = FALSE, color = "red")  +
-      theme_bw(base_size = 18) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      theme_bw(base_size = 18)  + theme_ranacapa() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 15))
+    # Plot it
+    wl
 
-    # Big old heat map -----------
-    heat <- ggplot(data = melt(as.matrix(d)), aes(x=Var1, y=Var2, fill=value)) +
-      geom_tile() + theme_bw(base_size = 18) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-    # Plot them all out ------
-    gridExtra::grid.arrange(igp, wl, heat, ncol = 1, heights = c(3,3,3,4))
-
-
-  }, height = 2000, width = 1000 )
+  }, height = 500, width = 750 )
 
   # Panel 6: Beta diversity statistics ----------
   output$adonisTable <- renderTable ({
@@ -258,17 +262,25 @@ server <- function(input, output)({
 
 
 
-  # Panel 7: Taxonomy-by-site interactive Barplot -------
+  # Panel 7: Taxonomy-by-site interactive barplot -------
   output$tax_bar <- renderPlotly({
 
     ## NOTE!
     # Think more about whether we should use physeq() or data_subset_unrare() here
     if(input$rared_taxplots == "unrarefied"){
-      plot_bar(physeq(), fill = input$taxon_level)
-      ggplotly()
+      plot_bar(physeq(), fill = input$taxon_level) + theme_ranacapa() +
+        theme(axis.text.x = element_text(angle = 45)) + theme(axis.title = element_blank())
+      gp <- ggplotly() %>%
+        layout(yaxis = list(title = "Abundance", titlefont = list(size = 16)),
+               xaxis = list(title = "Sample", titlefont = list(size = 16)),
+               margin = list(l = 70, b = 100))
+      gp
     } else{
-      plot_bar(data_subset(), fill = input$taxon_level)
-      ggplotly()
+      plot_bar(data_subset(), fill = input$taxon_level) + theme_ranacapa() +
+        theme(axis.text.x = element_text(angle = 45)) + theme(axis.title = element_blank())
+      gp <- ggplotly() %>% layout(yaxis = list(title = "Abundance"), xaxis = list(title = "Sample"),
+                   margin = list(l = 100, b = 100))
+      gp
     }
   })
 
@@ -299,7 +311,7 @@ server <- function(input, output)({
     for_hm <- for_hm %>% group_by(get(input$taxon_level)) %>% summarize_if(is.numeric, sum) %>%
       data.frame %>% column_to_rownames("get.input.taxon_level.")
     for_hm[for_hm == 0] <- NA
-    heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = T, grid_gap = 1, na.value = "white")
+    heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = F, grid_gap = 1, na.value = "white")
 
   })
 

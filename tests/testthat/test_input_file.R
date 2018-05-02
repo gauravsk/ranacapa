@@ -1,4 +1,6 @@
 context("check that bad input files break the validator function and good ones don't")
+library(dplyr)
+library(tibble)
 
 ## the test data ------
 # make a set of "good" input files

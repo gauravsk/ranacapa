@@ -1,4 +1,6 @@
 context("check that the physeq to vegan conversion proceeds smoothly")
+library(dplyr)
+library(tibble)
 
 # the test data ------
 

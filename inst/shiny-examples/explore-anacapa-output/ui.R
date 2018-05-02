@@ -29,8 +29,12 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
      # On panel 3, also ask how many replicate rarefactions should be done
     conditionalPanel(condition="input.tabselected == 3", uiOutput("rare_reps")),
 
-    # On panel 4 (alpha diveristy), ask whether users want observed or Shannon div stats
+    # On panel 4 (alpha diversity), ask whether users want observed or Shannon div stats
     conditionalPanel(condition="input.tabselected == 4", uiOutput("which_divtype")),
+
+    # On panel 4 (alpha diversity), ask whether users want x-axis labels rotated
+    conditionalPanel(condition="input.tabselected == 4",
+                     checkboxInput("rotate_x", label = "Select to rotate x-axis labels", value = F)),
 
     # On panel 5 (beta diersity),  ask whether users want to use NMDS or Bray disslimilarity
     conditionalPanel(condition="input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
@@ -94,16 +98,40 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                  by one of the characteristics of the plots. You can choose the characteristic from the dropdown list on the left."),
 
                plotlyOutput("alpharichness"),
-               br(),
+               br(), br(),
+               h4("Alpha Diversity AOV"),
                tableOutput("alphaDivAOV"),
+               br(),
+               h4("Alpha Diversity Tukey Tests"),
                tableOutput("alphaDivTukey"),
                h3("More resources on alpha diversity"),
                p(a("Measurements of Biodiversity", href="http://www.marinespecies.org/introduced/wiki/Measurements_of_biodiversity"))),
 
       # beta Diversity panels - first, just plots
       tabPanel("Beta Diversity exploration", value = 5,
-               plotlyOutput("betanmdsplotly")), # ,
-               # plotOutput("dissimMap")),
+               h3("Background on Beta Diversity"),
+               p("Alpha diversity lets us consider the diveristy within any given sample.
+A second way to consider the diversity among samples is to consider how", strong("dissimilar"), "samples are from each other.
+                 For example, two sites could hold ten species each- and it might be the same ten in both cases. A different pair of
+                 sites might hold ten species each, but it may be a completely different list of ten between the two sites. Quantifying
+                 differences between sites (i.e. low difference between the first pair of sites, which hold the same ten species; higher difference
+                 between the second pair) is at the crux of",
+                 a("Beta Diversity.",href = "https://methodsblog.wordpress.com/2015/05/27/beta_diversity/")),
+               p("Although it may seem simple at first, the calculation of Beta Diversity is still quite an unresolved
+topic in ecology- there's many ways for samples to be different from each other! Some of the many ways Beta diversity can be calculated are reviewed in the following
+                 references: ", a("What is Beta Diversity?", href = "https://methodsblog.wordpress.com/2015/05/27/beta_diversity/"), "; ",
+               a("Navigating the multiple meanings of Beta Diversity",
+                 href = "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1461-0248.2010.01552.x")),
+
+               br(),
+
+               p("Here we present one way of considering the beta diversity between plots "),
+
+               br(),
+               br(),
+               h4("PCoA plot"),
+               plotlyOutput("betanmdsplotly"),
+               plotOutput("dissimMap")),
 
       # beta Diversity panels- second, just stats
       tabPanel("Beta Diversity stats", value = 6,

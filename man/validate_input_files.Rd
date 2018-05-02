@@ -32,9 +32,4 @@ The standards incude:
 }
 \author{
 Gaurav Kandlikar
-1. Column names exist.
-2. One of the columns is named "sum.taxonomy"
-3. The "xxx_seq_number" column, if it ever existed, is removed
-4. All columns apart from sum.taxonomy should be numeric
-5. All columns apart from sum.taxonomy should have corresponding row in metadata file
 }
