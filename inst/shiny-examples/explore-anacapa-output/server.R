@@ -168,31 +168,26 @@ server <- function(input, output)({
   output$alpharichness <- renderPlotly({
     color <- "black"; shape <- "circle"
     colorvecname = "color"; shapevecname = "shape"
-    p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype, color = colorvecname, shape = shapevecname)
+    p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype,
+                       color = colorvecname, shape = shapevecname)
 
-    if(!input$rotate_x){
-      q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
-        theme_ranacapa() + theme(legend.position = "none") + theme(axis.title = element_blank())
-      gp <- ggplotly(tooltip = c("x", "value")) %>%
-        layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
-               xaxis = list(title = input$var, titlefont = list(size = 16)),
-               margin = list(l = 60, b = 60))
-    } else {
+    alpha_angle <- reactive({
+      if(!input$rotate_x){ 0 } else { 45 }
+    })
 
-      q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
-        theme_ranacapa() + theme(legend.position = "none") + theme(axis.title = element_blank()) +
-        theme(axis.text.x = element_text(angle = 45))
-      gp <- ggplotly(tooltip = c("x", "value")) %>%
-        layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
-               xaxis = list(title = input$var, titlefont = list(size = 16)),
-               margin = list(l = 60, b = 70))
-    }
-
+    q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
+      theme_ranacapa() + theme(legend.position = "none") +
+      theme(axis.title = element_blank()) +
+      theme(axis.text.x = element_text(angle = alpha_angle()))
+    gp <- ggplotly(tooltip = c("x", "value")) %>%
+      layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
+             xaxis = list(title = input$var, titlefont = list(size = 16)),
+             margin = list(l = 60, b = 70))
   })
 
 
   # Alpha diversity aov generation
-  physeq.alpha.anova <- reactive({
+  alpha_anova <- reactive({
     alpha.diversity <- estimate_richness(data_subset(), measures = c("Observed", "Shannon"))
     data <- cbind(sample_data(data_subset()), alpha.diversity)
     aov(as.formula(paste(input$divtype, "~" , input$var)), data)
@@ -200,12 +195,12 @@ server <- function(input, output)({
 
   # Alpha diversity AOV print
   output$alphaDivAOV <- renderTable({
-    broom::tidy(physeq.alpha.anova())
+    broom::tidy(alpha_anova())
   }, digits = 4)
 
   # Alpha Diversity tukey
   output$alphaDivTukey <- renderTable({
-    broom::tidy(TukeyHSD(physeq.alpha.anova()))
+    broom::tidy(TukeyHSD(alpha_anova()))
   }, digits = 4)
 
   # Panel 5: Beta Diversity exploration plots ------------
@@ -230,14 +225,13 @@ server <- function(input, output)({
 
     # Ward linkage map
     wcluster <- as.dendrogram(hclust(d, method = "ward.D2"))
-    envtype <- get_variable(data_subset(), input$var)
-    tipColor <- col_factor(rainbow(10), levels = levels(envtype))(envtype)
     wl <- ggdendro::ggdendrogram(wcluster, theme_dendro = FALSE, color = "red")  +
-      theme_bw(base_size = 18) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      theme_bw(base_size = 18)  + theme_ranacapa() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 15))
     # Plot it
     wl
 
-  }, height = 2000, width = 1000 )
+  }, height = 500, width = 750 )
 
   # Panel 6: Beta diversity statistics ----------
   output$adonisTable <- renderTable ({
