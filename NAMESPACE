@@ -2,6 +2,7 @@
 
 export("%>%")
 export(convert_anacapa_to_phyloseq)
+export(convert_biom_to_taxon_table)
 export(custom_rarefaction)
 export(ggrare)
 export(group_anacapa_by_taxonomy)

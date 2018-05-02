@@ -21,13 +21,15 @@ server <- function(input, output)({
   output$biomSelect <- renderUI({
     req(input$mode)
     if(input$mode == "Custom"){
-      fileInput("in_biom", "Select biom table")
+      fileInput("in_biom", "Please select your taxonomy table. Note: this should be saved either as XXX.biom or XXX.txt",
+                accept = c(".biom", ".txt", ".tsv"))
     }
   })
   output$metaSelect <- renderUI({
     req(input$mode)
     if(input$mode == "Custom"){
-      fileInput("in_metadata", "Select metadata")
+      fileInput("in_metadata", "Please select the metadata file. Note: this should be saved as XXX.txt",
+                accept = c(".txt", ".tsv"))
     }
   })
 
@@ -61,7 +63,7 @@ server <- function(input, output)({
       sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
                   value = 2000)} else if (input$rare_method == "minimum") {
                     radioButtons("rarefaction_depth", label = "The minimum number of reads in any single plot will be selected:",
-                                 choices = anacapa_output() %>% select_if(is.numeric) %>% colSums() %>% min())
+                                 choices = taxonomy_table() %>% select_if(is.numeric) %>% colSums() %>% min())
                   } else {}
   })
   output$rare_reps <- renderUI({
@@ -75,12 +77,19 @@ server <- function(input, output)({
   ########################################################
   # Read in data files, validate and make the physeq object --------
   ########################################################
-  anacapa_output <- reactive({
+  taxonomy_table <- reactive({
     if(input$mode == "Custom") {
-      read.table(input$in_biom$datapath, header = 1,
-                 sep = "\t", stringsAsFactors = F) %>%
-        scrub_seqNum_column() %>%
-        group_anacapa_by_taxonomy()
+      if(grepl(input$in_biom$datapath, pattern = ".txt") | grepl(input$in_biom$datapath, pattern = ".tsv")) {
+        read.table(input$in_biom$datapath, header = 1,
+                   sep = "\t", stringsAsFactors = F) %>%
+          scrub_seqNum_column() %>%
+          group_anacapa_by_taxonomy()
+      } else {
+        phyloseq::import_biom(input$in_biom$datapath) %>%
+          convert_biom_to_taxon_table () %>%
+          scrub_seqNum_column() %>%
+          group_anacapa_by_taxonomy()
+      }
     } else {
       readRDS("data/demo_biomdata.Rds") %>%
         scrub_seqNum_column() %>%
@@ -90,7 +99,11 @@ server <- function(input, output)({
 
   mapping_file <- reactive({
     if(input$mode == "Custom") {
-      read.table(input$in_metadata$datapath, header = 1, sep = "\t", stringsAsFactors = F)
+      if(grepl(readLines("~/grad/temp/metadata.tsv", n = 1), pattern = "^#")) {
+        phyloseq::import_qiime_sample_data(input$in_metadata$datapath) %>% as.matrix() %>% as.data.frame()
+      } else {
+        read.table(input$in_metadata$datapath, header = 1, sep = "\t", stringsAsFactors = F)
+      }
     } else {
       readRDS("data/demo_metadata.Rds")
     }
@@ -98,11 +111,11 @@ server <- function(input, output)({
 
 
   output$fileStatus <- renderText({
-    validate_input_files(anacapa_output(), mapping_file())
+    validate_input_files(taxonomy_table(), mapping_file())
   })
   # Make physeq object ----
   physeq <- reactive({
-    convert_anacapa_to_phyloseq(ana_taxon_table = anacapa_output(), metadata_file = mapping_file())
+    convert_anacapa_to_phyloseq(ana_taxon_table = taxonomy_table(), metadata_file = mapping_file())
   })
 
   # Make the object heads, that has the column names in the metadata file
@@ -112,8 +125,8 @@ server <- function(input, output)({
 
   # Panel 2:  Print OTU table ---------
 
-  output$print_biom <- renderDataTable({
-    anacapa_output() %>% select(sum.taxonomy, everything())
+  output$print_taxon_table <- renderDataTable({
+    taxonomy_table() %>% select(sum.taxonomy, everything())
   })
 
 
@@ -288,15 +301,15 @@ server <- function(input, output)({
   output$tax_heat <- renderPlotly({
 
     if(input$rared_taxplots == "unrarefied"){
-      biom <- anacapa_output() %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>%
+      tt <- taxonomy_table() %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>%
         mutate(sum.taxonomy = ifelse(sum.taxonomy == "", "NA;NA;NA;NA;NA;NA", sum.taxonomy))
 
-      for_hm <- cbind(biom, colsplit(biom$sum.taxonomy, ";",
+      for_hm <- cbind(tt, colsplit(tt$sum.taxonomy, ";",
                                      names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
     } else {
-      biom <- data.frame(otu_table(data_subset()))
+      tt <- data.frame(otu_table(data_subset()))
 
-      for_hm <- cbind(biom, colsplit(rownames(biom), ";",
+      for_hm <- cbind(tt, colsplit(rownames(biom), ";",
                                      names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
     }
 
