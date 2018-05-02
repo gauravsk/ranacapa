@@ -6,10 +6,11 @@
 #' @param plot default `TRUE`. Logical. Should the graph be plotted
 #' @param parallel default `FALSE`. Logical. Should rarefaction be parallelized
 #' @param se default `TRUE`. Logical. Should standard errors be calculated.
+#' @export
 
 ggrare <- function(physeq, step = 10, label = NULL, color = NULL, plot = TRUE, parallel = FALSE, se = TRUE) {
 
-  x <- as(phyloseq::otu_table(physeq), "matrix")
+  x <- methods::as(phyloseq::otu_table(physeq), "matrix")
   if (phyloseq::taxa_are_rows(physeq)) { x <- t(x) }
 
   ## This script is adapted from vegan `rarecurve` function
@@ -40,7 +41,7 @@ ggrare <- function(physeq, step = 10, label = NULL, color = NULL, plot = TRUE, p
 
   ## Get sample data
   if (!is.null(phyloseq::sample_data(physeq, FALSE))) {
-    sdf <- as(phyloseq::sample_data(physeq), "data.frame")
+    sdf <- methods::as(phyloseq::sample_data(physeq), "data.frame")
     sdf$Sample <- rownames(sdf)
     data <- merge(df, sdf, by = "Sample")
     labels <- data.frame(x = tot, y = S, Sample = rownames(x))

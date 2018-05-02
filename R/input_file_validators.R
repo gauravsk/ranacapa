@@ -6,6 +6,7 @@
 #' @param ana_taxon_table OTU table from Anacapa
 #' @author Gaurav Kandlikar
 #' @return ana_taxon_table file, with "xxx_seq_number" column removed (if it existed)
+#' @export
 scrub_seqNum_column <- function(ana_taxon_table) {
   to_return <- ana_taxon_table %>% dplyr::select(-dplyr::matches("seq_number"))
   return(to_return)
@@ -25,7 +26,7 @@ scrub_seqNum_column <- function(ana_taxon_table) {
 #' @param ana_taxon_table OTU table from Anacapa
 #' @param metadata_file Qiime-style mapping
 #' @author Gaurav Kandlikar
-
+#' @export
 validate_input_files <- function(ana_taxon_table, metadata_file) {
 
   #' 1. Column names exist.

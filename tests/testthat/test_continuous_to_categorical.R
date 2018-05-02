@@ -1,4 +1,6 @@
 context("check that continous variables get converted to cagegorical")
+library(dplyr)
+library(tibble)
 
 metadata_file <- data.frame(site = paste0("site_", 0:9),
                             season = rep(c("wet", "dry"),5),

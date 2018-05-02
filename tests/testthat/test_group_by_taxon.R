@@ -1,4 +1,6 @@
 context("check if grouping by taxon works properly")
+library(dplyr)
+library(tibble)
 
 ## the test data ------
 # the function should get rid of the empty row;

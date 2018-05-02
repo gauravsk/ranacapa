@@ -1,5 +1,7 @@
 context("check that the anacapa to physeq conversion proceeds smoothly")
-
+library(dplyr)
+library(tibble)
+library(phyloseq)
 # the test data ------
 
 # validate a set of "good" input files -------

@@ -1,6 +1,7 @@
 #' Takes a site-abundance table from Anacapa, and summarizes to each unique taxon in the sum.taxonomy column
 #' @param ana_taxon_table OTU table from Anacapa
 #' @author Gaurav Kandlikar
+#' @export
 group_anacapa_by_taxonomy <- function(ana_taxon_table) {
   ana_taxon_table %>%
     dplyr::filter(sum.taxonomy != "") %>%
@@ -17,7 +18,7 @@ group_anacapa_by_taxonomy <- function(ana_taxon_table) {
 #' @author Gaurav Kandlikar
 
 categorize_continuous_vector <- function(vec) {
-  cut(vec, breaks = c(0, quantile(vec, probs = seq(from = 1/3, to = 1, by = 1/3))),
+  cut(vec, breaks = c(0, stats::quantile(vec, probs = seq(from = 1/3, to = 1, by = 1/3))),
       labels = c("low", "medium","high"), include.lowest = TRUE)
 }
 
@@ -35,6 +36,7 @@ categorize_continuous_metadata <- function(metadata_file){
 #' @param metadata_file Qiime-style mapping
 #' @return phyloseq class object
 #' @author Gaurav Kandlikar
+#' @export
 
 convert_anacapa_to_phyloseq <- function(ana_taxon_table, metadata_file) {
 
@@ -80,10 +82,11 @@ convert_anacapa_to_phyloseq <- function(ana_taxon_table, metadata_file) {
 #' @param physeq_object phyloseq object with an otu_table object within
 #' @return vegan-style community matrix
 #' @author Gaurav Kandlikar
+#' @export
 vegan_otu <- function(physeq_object) {
   OTU <- phyloseq::otu_table(physeq_object)
   if (phyloseq::taxa_are_rows(OTU)) {
     OTU <- t(OTU)
   }
-  return(as(OTU, "matrix"))
+  return(methods::as(OTU, "matrix"))
 }

@@ -5,6 +5,7 @@
 #' @param ... Other options for phyloseq function rarefy_even_depth
 #' @return phyloseq class object
 #' @author Gaurav Kandlikar
+#' @export
 
 custom_rarefaction <- function(physeq, sample_size = 10000, replicates = 10, ...) {
 
@@ -15,7 +16,7 @@ custom_rarefaction <- function(physeq, sample_size = 10000, replicates = 10, ...
   dfs <- lapply(dfs, function(x) tibble::rownames_to_column(x, var = "taxonomy"))
   dfs <- do.call(rbind.data.frame, dfs)
 
-  otu <- dfs %>% dplyr::group_by(taxonomy) %>% dplyr::summarize_all(funs(sum(.)/replicates)) %>%
+  otu <- dfs %>% dplyr::group_by(taxonomy) %>% dplyr::summarize_all(dplyr::funs(sum(.)/replicates)) %>%
     dplyr::mutate_if(is.numeric, funs(round)) %>%
     data.frame %>%
     tibble::column_to_rownames("taxonomy") %>% as.matrix
