@@ -18,33 +18,50 @@ group_anacapa_by_taxonomy <- function(ana_taxon_table) {
 #' @author Gaurav Kandlikar
 
 categorize_continuous_vector <- function(vec) {
-  cut(vec, breaks = c(0, stats::quantile(vec, probs = seq(from = 1/3, to = 1, by = 1/3))),
-      labels = c("low", "medium","high"), include.lowest = TRUE)
+  if(is.numeric(vec)) {
+    if(length(unique(vec)) > 2) {
+      cut(vec, breaks = c(0, stats::quantile(vec, probs = seq(from = 1/3, to = 1, by = 1/3))),
+          labels = c("low", "medium","high"), include.lowest = TRUE)
+    } else if (length(unique(vec)) == 2) {
+      vec[vec == min(vec)] = "low"
+      vec[vec != "low"] = "high"
+      as.factor(vec)
+    } else if(length(unique(vec)) == 1) {
+      as.character(vec)
+    }
+  } else {
+    vec
+  }
 }
 
 #' Takes a metadata file, and categorizes any continuous variable into "low, med, high"
 #' @param metadata_file a well-formatted metadata file
+#' @param cols_to_convert a vector, containing the names of the column that should be categorized
 #' @return a metadata file with categorical column in place of the continuous one
 #' @author Gaurav Kandlikar
 
-categorize_continuous_metadata <- function(metadata_file){
-  metadata_file %>% dplyr::mutate_if(is.numeric, categorize_continuous_vector)
+categorize_continuous_metadata <- function(metadata_file, cols_to_convert = NULL){
+  if(is.null(cols_to_convert)) {
+    metadata_file
+  } else {
+    metadata_file %>% dplyr::mutate_at(cols_to_convert, categorize_continuous_vector)
+  }
 }
-
 #' Takes an site-abundance table from Anacapa, along with a qiime-style mapping file, and returns a phyloseq object
-#' @param ana_taxon_table OTU table from Anacapa
-#' @param metadata_file Qiime-style mapping
+#' @param ana_taxon_table Taxon table in the anacapa format
+#' @param metadata_file Metadata file with rows as sites, columns as variables
+#' @param cols_to_categorize a vector containing the names of any columns in metadata_file that should be categorized into "high, medium, low"
 #' @return phyloseq class object
 #' @author Gaurav Kandlikar
 #' @export
 
-convert_anacapa_to_phyloseq <- function(ana_taxon_table, metadata_file) {
+convert_anacapa_to_phyloseq <- function(ana_taxon_table, metadata_file, cols_to_categorize = NULL) {
 
   # validate the files
   validate_input_files(ana_taxon_table, metadata_file)
 
   # convert any continuous metadata variables to categorical
-  metadata_file <- categorize_continuous_metadata(metadata_file)
+  metadata_file <- categorize_continuous_metadata(metadata_file, cols_to_categorize)
 
   # Group the anacapa ouptut by taxonomy, if it has not yet happened, and turn it into a matrix
   ana_taxon_table2 <- group_anacapa_by_taxonomy(ana_taxon_table) %>%
