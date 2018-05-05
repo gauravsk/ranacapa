@@ -304,20 +304,18 @@ server <- function(input, output)({
     ## NOTE!
     # Think more about whether we should use physeq() or data_subset_unrare() here
     if(input$rared_taxplots == "unrarefied"){
-      plot_bar(physeq(), fill = input$taxon_level) + theme_ranacapa() +
-        theme(axis.text.x = element_text(angle = 45)) + theme(axis.title = element_blank())
-      gp <- ggplotly() %>%
-        layout(yaxis = list(title = "Abundance", titlefont = list(size = 16)),
-               xaxis = list(title = "Sample", titlefont = list(size = 16)),
-               margin = list(l = 70, b = 100))
-      gp
+      physeqGlommed = tax_glom(data_subset_unrare(), input$taxon_level)
     } else{
-      plot_bar(data_subset(), fill = input$taxon_level) + theme_ranacapa() +
-        theme(axis.text.x = element_text(angle = 45)) + theme(axis.title = element_blank())
-      gp <- ggplotly() %>% layout(yaxis = list(title = "Abundance"), xaxis = list(title = "Sample"),
-                   margin = list(l = 100, b = 100))
-      gp
+      physeqGlommed = tax_glom(data_subset(), input$taxon_level)
     }
+    plot_bar(physeqGlommed, fill = input$taxon_level) + theme_ranacapa() +
+      theme(axis.text.x = element_text(angle = 45)) +
+      theme(axis.title = element_blank())
+    gp <- ggplotly() %>%
+      layout(yaxis = list(title = "Abundance", titlefont = list(size = 16)),
+             xaxis = list(title = "Sample", titlefont = list(size = 16)),
+             margin = list(l = 70, b = 100))
+    gp
   })
 
   ## Panel 8: Heatmap of taxonomy by site ---------
