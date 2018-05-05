@@ -33,7 +33,7 @@ devtools::install_github("gauravsk/ranacapa")
 
 ```
 library(ranacapa)
-ranacapa::runExample()
+ranacapa::runRanacapaApp()
 ```
 
 
