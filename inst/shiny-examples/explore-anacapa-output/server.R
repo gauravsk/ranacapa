@@ -84,7 +84,7 @@ server <- function(input, output)({
                    sep = "\t", stringsAsFactors = F) %>%
           scrub_seqNum_column() %>%
           group_anacapa_by_taxonomy()
-      } else {
+      } else if (grepl(input$in_biom$datapath, pattern = ".biom")) {
         phyloseq::import_biom(input$in_biom$datapath) %>%
           convert_biom_to_taxon_table () %>%
           scrub_seqNum_column() %>%
