@@ -24,7 +24,7 @@ ggrare <- function(physeq, step = 10, label = NULL, color = NULL, plot = TRUE, p
     if (n[length(n)] != tot[i]) {
       n <- c(n, tot[i])
     }
-    y <- rarefy(x[i, ,drop = FALSE], n, se = se)
+    y <- vegan::rarefy(x[i, ,drop = FALSE], n, se = se)
     if (nrow(y) != 1) {
       rownames(y) <- c(".S", ".se")
       return(data.frame(t(y), Size = n, Sample = rownames(x)[i]))

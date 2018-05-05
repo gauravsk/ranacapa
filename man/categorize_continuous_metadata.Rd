@@ -4,10 +4,12 @@
 \alias{categorize_continuous_metadata}
 \title{Takes a metadata file, and categorizes any continuous variable into "low, med, high"}
 \usage{
-categorize_continuous_metadata(metadata_file)
+categorize_continuous_metadata(metadata_file, cols_to_convert = NULL)
 }
 \arguments{
 \item{metadata_file}{a well-formatted metadata file}
+
+\item{cols_to_convert}{a vector, containing the names of the column that should be categorized}
 }
 \value{
 a metadata file with categorical column in place of the continuous one

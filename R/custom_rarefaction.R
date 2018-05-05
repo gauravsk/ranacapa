@@ -1,3 +1,5 @@
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("sum.taxonomy", ".", "id", "taxonomy"))
+
 #' Rarefy a phyloseq object to a custom sample depth and with given number of repliactes
 #' @param physeq A phyloseq class object to be rarefied
 #' @param sample_size Desired depth of rarefaction
@@ -17,7 +19,7 @@ custom_rarefaction <- function(physeq, sample_size = 10000, replicates = 10, ...
   dfs <- do.call(rbind.data.frame, dfs)
 
   otu <- dfs %>% dplyr::group_by(taxonomy) %>% dplyr::summarize_all(dplyr::funs(sum(.)/replicates)) %>%
-    dplyr::mutate_if(is.numeric, funs(round)) %>%
+    dplyr::mutate_if(is.numeric, dplyr::funs(round)) %>%
     data.frame %>%
     tibble::column_to_rownames("taxonomy") %>% as.matrix
 
