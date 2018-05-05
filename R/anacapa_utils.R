@@ -1,3 +1,6 @@
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("sum.taxonomy", "."))
+
+
 #' Takes a site-abundance table from Anacapa, and summarizes to each unique taxon in the sum.taxonomy column
 #' @param ana_taxon_table OTU table from Anacapa
 #' @author Gaurav Kandlikar

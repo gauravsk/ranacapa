@@ -16,27 +16,39 @@ library(heatmaply)
 options(digits = 5, shiny.maxRequestSize=10*1024^2)
 
 server <- function(input, output)({
+  # RenderUI for which_variable_r, gets used in Panels 1, 3,4,5,6
+  output$which_variable_r <- renderUI({
+    selectInput("var", "Select the variable", choices = heads())
+  })
 
   # RenderUIs for Panel 1
   output$biomSelect <- renderUI({
     req(input$mode)
     if(input$mode == "Custom"){
-      fileInput("in_biom", "Please select your taxonomy table. Note: this should be saved either as XXX.biom or XXX.txt",
+      fileInput("in_biom", "Please select your taxonomy table.
+                Note: this should be saved either as *.biom or *.txt",
                 accept = c(".biom", ".txt", ".tsv"))
     }
   })
   output$metaSelect <- renderUI({
     req(input$mode)
     if(input$mode == "Custom"){
-      fileInput("in_metadata", "Please select the metadata file. Note: this should be saved as XXX.txt",
+      fileInput("in_metadata", "Please select the metadata file.
+                Note: this should be saved as *.txt",
                 accept = c(".txt", ".tsv"))
     }
   })
-
-  # RenderUI for which_variable_r, gets used in Panels 3,4,5,6
-  output$which_variable_r <- renderUI({
-    selectInput("var", "Select the variable", choices = heads())
+  output$numericColnames <- renderUI({
+    if(length(heads_numeric()) == 0) {
+      textOutput("No continuous variables detected")
+    } else {
+      checkboxGroupInput("which_cont_to_cat", label = "",
+                         choices = heads_numeric())
+    }
   })
+
+
+
 
   # RenderUI for which_divtype, for Alpha Diversity Panel 4
   output$which_divtype <- renderUI({
@@ -69,13 +81,11 @@ server <- function(input, output)({
   output$rare_reps <- renderUI({
     if(!(input$rare_method == "none")){
         sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
-    } else {
-
-      }
+    } else {}
   })
 
   ########################################################
-  # Read in data files, validate and make the physeq object --------
+  # Read in data files, validate and make the physeq object
   ########################################################
   taxonomy_table <- reactive({
     if(input$mode == "Custom") {
@@ -110,12 +120,18 @@ server <- function(input, output)({
   })
 
 
-  output$fileStatus <- renderText({
+  output$fileStatus <- eventReactive(input$go,{
+  if(is.null(validate_input_files(taxonomy_table(), mapping_file()))) {
+    paste("Congrats, no errors detected!")
+  } else {
     validate_input_files(taxonomy_table(), mapping_file())
+  }
   })
   # Make physeq object ----
-  physeq <- reactive({
-    convert_anacapa_to_phyloseq(ana_taxon_table = taxonomy_table(), metadata_file = mapping_file())
+
+  physeq <- eventReactive(input$go, {
+    convert_anacapa_to_phyloseq(ana_taxon_table = taxonomy_table(),
+                                metadata_file = mapping_file(),cols_to_categorize = input$which_cont_to_cat)
   })
 
   # Make the object heads, that has the column names in the metadata file
@@ -123,11 +139,18 @@ server <- function(input, output)({
     base::colnames(mapping_file())
   })
 
+  heads_numeric <- reactive({
+    mapping_file() %>% dplyr::select_if(is.numeric) %>% base::colnames()
+  })
+
   # Panel 2:  Print OTU table ---------
 
   output$print_taxon_table <- renderDataTable({
     taxonomy_table() %>% select(sum.taxonomy, everything())
-  })
+  }, options = list(pageLength = 5))
+  output$print_metadata_table <- renderDataTable({
+    mapping_file()
+  }, options = list(pageLength = 5))
 
 
 
@@ -180,9 +203,8 @@ server <- function(input, output)({
   # Alpha diversity boxplots
   output$alpharichness <- renderPlotly({
     color <- "black"; shape <- "circle"
-    colorvecname = "color"; shapevecname = "shape"
     p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype,
-                       color = colorvecname, shape = shapevecname)
+                       color = input$var, shape = input$var)
 
     alpha_angle <- reactive({
       if(!input$rotate_x){ 0 } else { 45 }
@@ -221,7 +243,8 @@ server <- function(input, output)({
   output$betanmdsplotly <- renderPlotly({
     d <- distance(data_subset(), method=input$dissimMethod)
     ord <- ordinate(data_subset(), method = "MDS", distance = d)
-    nmdsplot <- plot_ordination(data_subset(), ord, input$var, color = input$var) +
+    nmdsplot <- plot_ordination(data_subset(), ord, input$var,
+                                color = input$var, shape = input$var) +
       # stat_ellipse(type = "t", geom = "polygon", alpha = 0.2) +
       ggtitle(paste(input$var, "NMDS; dissimilarity method:",
                     tools::toTitleCase(input$dissimMethod))) +
@@ -301,17 +324,14 @@ server <- function(input, output)({
   output$tax_heat <- renderPlotly({
 
     if(input$rared_taxplots == "unrarefied"){
-      tt <- taxonomy_table() %>% mutate(sum.taxonomy = as.character(sum.taxonomy)) %>%
-        mutate(sum.taxonomy = ifelse(sum.taxonomy == "", "NA;NA;NA;NA;NA;NA", sum.taxonomy))
+      tt <-  data.frame(otu_table(data_subset_unrare()))
 
-      for_hm <- cbind(tt, colsplit(tt$sum.taxonomy, ";",
-                                     names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
     } else {
       tt <- data.frame(otu_table(data_subset()))
 
-      for_hm <- cbind(tt, colsplit(rownames(biom), ";",
-                                     names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
     }
+    for_hm <- cbind(tt, colsplit(rownames(tt), ";",
+                                 names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
 
     for_hm <- for_hm %>%
       mutate(Phylum = ifelse(is.na(Phylum) | Phylum == "", "unknown", Phylum)) %>%
