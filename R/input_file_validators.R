@@ -13,7 +13,7 @@ scrub_seqNum_column <- function(taxon_table) {
 }
 
 
-#' Verify that the input ana_taxon_table file and the input mapping file meets specificationss
+#' Verify that the input taxon_table file and the input mapping file meets specificationss
 #' validate_input_biom takes one biom table as its input, and verfies that it meets
 #' the expected standards.
 #' The standards incude:
