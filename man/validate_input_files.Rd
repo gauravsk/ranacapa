@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_file_validators.R
 \name{validate_input_files}
 \alias{validate_input_files}
-\title{Verify that the input ana_taxon_table file and the input mapping file meets specificationss
+\title{Verify that the input taxon_table file and the input mapping file meets specificationss
 validate_input_biom takes one biom table as its input, and verfies that it meets
 the expected standards.
 The standards incude:
@@ -12,15 +12,15 @@ The standards incude:
 4. All columns apart from sum.taxonomy should be numeric
 5. All columns apart from sum.taxonomy should have corresponding row in metadata file}
 \usage{
-validate_input_files(ana_taxon_table, metadata_file)
+validate_input_files(taxon_table, metadata_file)
 }
 \arguments{
-\item{ana_taxon_table}{OTU table from Anacapa}
+\item{taxon_table}{OTU table from Anacapa}
 
 \item{metadata_file}{Qiime-style mapping}
 }
 \description{
-Verify that the input ana_taxon_table file and the input mapping file meets specificationss
+Verify that the input taxon_table file and the input mapping file meets specificationss
 validate_input_biom takes one biom table as its input, and verfies that it meets
 the expected standards.
 The standards incude:

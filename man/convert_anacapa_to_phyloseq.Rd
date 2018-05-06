@@ -4,11 +4,11 @@
 \alias{convert_anacapa_to_phyloseq}
 \title{Takes an site-abundance table from Anacapa, along with a qiime-style mapping file, and returns a phyloseq object}
 \usage{
-convert_anacapa_to_phyloseq(ana_taxon_table, metadata_file,
+convert_anacapa_to_phyloseq(taxon_table, metadata_file,
   cols_to_categorize = NULL)
 }
 \arguments{
-\item{ana_taxon_table}{Taxon table in the anacapa format}
+\item{taxon_table}{Taxon table in the anacapa format}
 
 \item{metadata_file}{Metadata file with rows as sites, columns as variables}
 
