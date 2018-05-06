@@ -16,6 +16,8 @@ library(heatmaply)
 options(digits = 5, shiny.maxRequestSize=10*1024^2)
 
 server <- function(input, output)({
+
+  # Setup and RenderUIs ---------------
   # RenderUI for which_variable_r, gets used in Panels 1, 3,4,5,6
   output$which_variable_r <- renderUI({
     selectInput("var", "Select the variable", choices = heads())
@@ -48,8 +50,6 @@ server <- function(input, output)({
   })
 
 
-
-
   # RenderUI for which_divtype, for Alpha Diversity Panel 4
   output$which_divtype <- renderUI({
     radioButtons("divtype",
@@ -78,7 +78,10 @@ server <- function(input, output)({
       sliderInput("rarefaction_depth",
                   label = "Select a depth of rarefaction",
                   min = 2000,
-                  max = 100000,
+                  max = taxonomy_table() %>%
+                    select_if(is.numeric) %>%
+                    colSums() %>%
+                    max(),
                   step = 1000,
                   value = 2000)
       } else if (input$rare_method == "minimum") {
