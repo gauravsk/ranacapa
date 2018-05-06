@@ -7,10 +7,10 @@ takes one biom table as its input, and if it include
 a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 any longer}
 \usage{
-scrub_seqNum_column(ana_taxon_table)
+scrub_seqNum_column(taxon_table)
 }
 \arguments{
-\item{ana_taxon_table}{OTU table from Anacapa}
+\item{taxon_table}{OTU table from Anacapa}
 }
 \value{
 ana_taxon_table file, with "xxx_seq_number" column removed (if it existed)

@@ -4,17 +4,17 @@
 \alias{ggrare}
 \title{Make a rarefaction curve using ggplot2}
 \usage{
-ggrare(physeq, step = 10, label = NULL, color = NULL, plot = TRUE,
-  parallel = FALSE, se = TRUE)
+ggrare(physeq_object, step = 10, label = NULL, color = NULL,
+  plot = TRUE, parallel = FALSE, se = TRUE)
 }
 \arguments{
-\item{physeq}{A phyloseq class object, from which abundance data are extracted}
+\item{physeq_object}{A phyloseq class object, from which abundance data are extracted}
 
 \item{step}{Step Size for sample size in rarefaction curves}
 
 \item{label}{Default `NULL`. Character string. The name of the variable to map to text labels on the plot. Similar to color option but for plotting text.}
 
-\item{color}{Default `NULL`. Character string. The name of the variable to map to the colors in the plot. This can be a sample variables among the set returned by sample_variables(physeq) or taxonomic rank, among the set returned by rank_names(physeq)}
+\item{color}{Default `NULL`. Character string. The name of the variable to map to the colors in the plot. This can be a sample variables among the set returned by sample_variables(physeq_object) or taxonomic rank, among the set returned by rank_names(physeq_object)}
 
 \item{plot}{default `TRUE`. Logical. Should the graph be plotted}
 

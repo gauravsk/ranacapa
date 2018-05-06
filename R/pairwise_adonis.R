@@ -13,17 +13,17 @@
 #'@author Pedro Martinez Arbizu
 #'@examples
 #' data(iris)
-#' pairwise_adonis(iris[,1:4],iris$Species)
+#' pairwise_adonis(iris[, 1:4], iris$Species)
 #'
-#' pairwise_adonis(iris[,1:4],iris$Species,reduce = 'setosa')
+#' pairwise_adonis(iris[, 1:4], iris$Species, reduce = 'setosa')
 #'
 #'# similarity euclidean from vegdist and holm correction
-#' pairwise_adonis(x=iris[,1:4],factors=iris$Species,
-#' sim_method='euclidian',p_adjust_m='holm')
+#' pairwise_adonis(x = iris[, 1:4], factors = iris$Species,
+#' sim_method = 'euclidian', p_adjust_m = 'holm')
 #'
 #'#similarity manhattan from daisy and bonferroni correction
-#' pairwise_adonis(x=iris[,1:4],factors=iris$Species,
-#' sim_method='manhattan',p_adjust_m='bonferroni')
+#' pairwise_adonis(x = iris[, 1:4], factors = iris$Species,
+#' sim_method = 'manhattan', p_adjust_m = 'bonferroni')
 #'@export pairwise_adonis
 #'@importFrom stats p.adjust
 #'@importFrom utils combn
