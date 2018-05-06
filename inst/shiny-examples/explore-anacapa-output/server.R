@@ -13,7 +13,7 @@ library(ranacapa)
 library(scales)
 library(heatmaply)
 
-options(digits = 5, shiny.maxRequestSize=10*1024^2)
+options(digits = 5, shiny.maxRequestSize = 10 * 1024 ^ 2)
 
 server <- function(input, output)({
 
@@ -44,7 +44,8 @@ server <- function(input, output)({
     if (length(heads_numeric()) == 0) {
       textOutput("No continuous variables detected")
     } else {
-      checkboxGroupInput("which_cont_to_cat", label = "",
+      checkboxGroupInput("which_cont_to_cat",
+                         label = "",
                          choices = heads_numeric())
     }
   })
@@ -143,7 +144,7 @@ server <- function(input, output)({
   })
 
 
-  output$fileStatus <- eventReactive(input$go,{
+  output$fileStatus <- eventReactive(input$go, {
   if (is.null(validate_input_files(taxonomy_table(), mapping_file()))) {
     paste("Congrats, no errors detected!")
   } else {
@@ -153,8 +154,9 @@ server <- function(input, output)({
   # Make physeq object ----
 
   physeq <- eventReactive(input$go, {
-    convert_anacapa_to_phyloseq(ana_taxon_table = taxonomy_table(),
-                                metadata_file = mapping_file(),cols_to_categorize = input$which_cont_to_cat)
+    convert_anacapa_to_phyloseq(taxon_table = taxonomy_table(),
+                                metadata_file = mapping_file(),
+                                cols_to_categorize = input$which_cont_to_cat)
   })
 
   # Make the object heads, that has the column names in the metadata file
@@ -163,7 +165,9 @@ server <- function(input, output)({
   })
 
   heads_numeric <- reactive({
-    mapping_file() %>% dplyr::select_if(is.numeric) %>% base::colnames()
+    mapping_file() %>%
+      dplyr::select_if(is.numeric) %>%
+      base::colnames()
   })
 
   # Panel 2:  Print OTU table ---------
@@ -207,7 +211,9 @@ server <- function(input, output)({
       p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
       q <- p + theme_ranacapa() + theme(axis.title = element_blank())
       gp <- ggplotly(tooltip = c("Sample", input$var)) %>%
-        layout(yaxis = list(title = "Species Richness", titlefont = list(size = 16)), xaxis = list(title = "Sequence Sample Size", titlefont = list(size = 16)), margin = list(l = 100, b = 60))
+        layout(yaxis = list(title = "Species Richness", titlefont = list(size = 16)),
+               xaxis = list(title = "Sequence Sample Size", titlefont = list(size = 16)),
+               margin = list(l = 100, b = 60))
       gp
     })
 
@@ -218,8 +224,10 @@ server <- function(input, output)({
       incProgress(0.1)
 
       p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
-      q <- p +  facet_wrap(as.formula(paste("~", input$var))) +
-        theme_ranacapa() + theme(axis.text.x = element_text(angle = 45))
+      q <- p +
+        facet_wrap(as.formula(paste("~", input$var))) +
+        theme_ranacapa() +
+        theme(axis.text.x = element_text(angle = 45))
       gp <- ggplotly(tooltip = c("Sample", input$var))
       gp[['x']][['layout']][['annotations']][[2]][['x']] <- -0.07  # adjust y axis title (actually an annotation)
       gp[['x']][['layout']][['annotations']][[1]][['y']] <- -0.15  # adjust x axis title (actually an annotation)
@@ -236,15 +244,20 @@ server <- function(input, output)({
 
     withProgress(message = 'Rendering alpha diversity plot', value = 0, {
       incProgress(0.1)
-      p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype,
-                         color = input$var, shape = input$var)
+      p <- plot_richness(data_subset(),
+                         x = input$var,
+                         measures= input$divtype,
+                         color = input$var,
+                         shape = input$var)
 
       alpha_angle <- reactive({
         if (!input$rotate_x){ 0 } else { 45 }
       })
 
-      q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
-        theme_ranacapa() + theme(legend.position = "none") +
+      q <- p +
+        geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
+        theme_ranacapa() +
+        theme(legend.position = "none") +
         theme(axis.title = element_blank()) +
         theme(axis.text.x = element_text(angle = alpha_angle()))
       gp <- ggplotly(tooltip = c("x", "value")) %>%
@@ -344,7 +357,7 @@ server <- function(input, output)({
 
       if (input$rared_taxplots == "unrarefied") {
         physeqGlommed = tax_glom(data_subset_unrare(), input$taxon_level)
-      } else{
+      } else {
         physeqGlommed = tax_glom(data_subset(), input$taxon_level)
       }
       plot_bar(physeqGlommed, fill = input$taxon_level) + theme_ranacapa() +
@@ -383,8 +396,11 @@ server <- function(input, output)({
         mutate(Genus = ifelse(is.na(Genus) | Genus == "", "unknown", Genus)) %>%
         mutate(Species = ifelse(is.na(Species)| Species == "", "unknown", Species))
 
-      for_hm <- for_hm %>% group_by(get(input$taxon_level)) %>% summarize_if(is.numeric, sum) %>%
-        data.frame %>% column_to_rownames("get.input.taxon_level.")
+      for_hm <- for_hm %>%
+        group_by(get(input$taxon_level)) %>%
+        summarize_if(is.numeric, sum) %>%
+        data.frame %>%
+        column_to_rownames("get.input.taxon_level.")
       for_hm[for_hm == 0] <- NA
       heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = F, grid_gap = 1, na.value = "white")
     })
