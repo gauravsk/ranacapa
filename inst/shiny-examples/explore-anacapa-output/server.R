@@ -24,7 +24,7 @@ server <- function(input, output)({
   # RenderUIs for Panel 1
   output$biomSelect <- renderUI({
     req(input$mode)
-    if(input$mode == "Custom"){
+    if (input$mode == "Custom") {
       fileInput("in_biom", "Please select your taxonomy table.
                 Note: this should be saved either as *.biom or *.txt",
                 accept = c(".biom", ".txt", ".tsv"))
@@ -32,14 +32,14 @@ server <- function(input, output)({
   })
   output$metaSelect <- renderUI({
     req(input$mode)
-    if(input$mode == "Custom"){
+    if (input$mode == "Custom") {
       fileInput("in_metadata", "Please select the metadata file.
                 Note: this should be saved as *.txt",
                 accept = c(".txt", ".tsv"))
     }
   })
   output$numericColnames <- renderUI({
-    if(length(heads_numeric()) == 0) {
+    if (length(heads_numeric()) == 0) {
       textOutput("No continuous variables detected")
     } else {
       checkboxGroupInput("which_cont_to_cat", label = "",
@@ -52,35 +52,50 @@ server <- function(input, output)({
 
   # RenderUI for which_divtype, for Alpha Diversity Panel 4
   output$which_divtype <- renderUI({
-    radioButtons("divtype", label = "Observed or Shannon diversity?",
+    radioButtons("divtype",
+                 label = "Observed or Shannon diversity?",
                  choices = c("Observed", "Shannon"))
   })
 
   # RenderUI for which_dissim, used for Beta Diversity Panel 5,6
   output$which_dissim <- renderUI({
-    radioButtons("dissimMethod", "Which type of distance metric would you like?",
+    radioButtons("dissimMethod",
+                 "Which type of distance metric would you like?",
                  choices = c("bray", "jaccard"))
   })
 
   # RenderUI for which_taxon_level, used for barplot and heatmap in Panels 7,8
   output$which_taxon_level <- renderUI({
-    radioButtons("taxon_level", "Pick the taxonomic level for making the plot",
+    radioButtons("taxon_level",
+                 "Pick the taxonomic level for making the plot",
                  choices = c("Phylum", "Class", "Order", "Family", "Genus", "Species"))
 
   })
 
   # Render UIs for Panel 3 (Rarefaction)
   output$rare_depth <- renderUI({
-    if(input$rare_method == "custom"){
-      sliderInput("rarefaction_depth", label = "Select a depth of rarefaction", min = 2000, max = 100000, step = 1000,
+    if (input$rare_method == "custom") {
+      sliderInput("rarefaction_depth",
+                  label = "Select a depth of rarefaction",
+                  min = 2000,
+                  max = 100000,
+                  step = 1000,
                   value = 2000)} else if (input$rare_method == "minimum") {
-                    radioButtons("rarefaction_depth", label = "The minimum number of reads in any single plot will be selected:",
-                                 choices = taxonomy_table() %>% select_if(is.numeric) %>% colSums() %>% min())
+                    radioButtons("rarefaction_depth",
+                                 label = "The minimum number of reads in any single plot will be selected:",
+                                 choices = taxonomy_table() %>%
+                                   select_if(is.numeric) %>%
+                                   colSums() %>%
+                                   min())
                   } else {}
   })
   output$rare_reps <- renderUI({
-    if(!(input$rare_method == "none")){
-        sliderInput("rarefaction_reps", label = "Select the number of times to rarefy", min = 2, max = 20, value = 2)
+    if (!(input$rare_method == "none")) {
+        sliderInput("rarefaction_reps",
+                    label = "Select the number of times to rarefy",
+                    min = 2,
+                    max = 20,
+                    value = 2)
     } else {}
   })
 
@@ -88,15 +103,15 @@ server <- function(input, output)({
   # Read in data files, validate and make the physeq object
   ########################################################
   taxonomy_table <- reactive({
-    if(input$mode == "Custom") {
-      if(grepl(input$in_biom$datapath, pattern = ".txt") | grepl(input$in_biom$datapath, pattern = ".tsv")) {
+    if (input$mode == "Custom") {
+      if (grepl(input$in_biom$datapath, pattern = ".txt") | grepl(input$in_biom$datapath, pattern = ".tsv")) {
         read.table(input$in_biom$datapath, header = 1,
                    sep = "\t", stringsAsFactors = F) %>%
           scrub_seqNum_column() %>%
           group_anacapa_by_taxonomy()
       } else if (grepl(input$in_biom$datapath, pattern = ".biom")) {
         phyloseq::import_biom(input$in_biom$datapath) %>%
-          convert_biom_to_taxon_table () %>%
+          convert_biom_to_taxon_table() %>%
           scrub_seqNum_column() %>%
           group_anacapa_by_taxonomy()
       }
@@ -108,9 +123,11 @@ server <- function(input, output)({
   })
 
   mapping_file <- reactive({
-    if(input$mode == "Custom") {
-      if(grepl(readLines("~/grad/temp/metadata.tsv", n = 1), pattern = "^#")) {
-        phyloseq::import_qiime_sample_data(input$in_metadata$datapath) %>% as.matrix() %>% as.data.frame()
+    if (input$mode == "Custom") {
+      if (grepl(readLines("~/grad/temp/metadata.tsv", n = 1), pattern = "^#")) {
+        phyloseq::import_qiime_sample_data(input$in_metadata$datapath) %>%
+          as.matrix() %>%
+          as.data.frame()
       } else {
         read.table(input$in_metadata$datapath, header = 1, sep = "\t", stringsAsFactors = F)
       }
@@ -121,7 +138,7 @@ server <- function(input, output)({
 
 
   output$fileStatus <- eventReactive(input$go,{
-  if(is.null(validate_input_files(taxonomy_table(), mapping_file()))) {
+  if (is.null(validate_input_files(taxonomy_table(), mapping_file()))) {
     paste("Congrats, no errors detected!")
   } else {
     validate_input_files(taxonomy_table(), mapping_file())
@@ -129,9 +146,9 @@ server <- function(input, output)({
   })
   # Make physeq object ----
 
-  physeq <- eventReactive(input$go, {
-    convert_anacapa_to_phyloseq(ana_taxon_table = taxonomy_table(),
-                                metadata_file = mapping_file(),cols_to_categorize = input$which_cont_to_cat)
+  physeq_object <- eventReactive(input$go, {
+    convert_anacapa_to_phyloseq(taxon_table = taxonomy_table(),
+                                metadata_file = mapping_file(), cols_to_categorize = input$which_cont_to_cat)
   })
 
   # Make the object heads, that has the column names in the metadata file
@@ -140,7 +157,9 @@ server <- function(input, output)({
   })
 
   heads_numeric <- reactive({
-    mapping_file() %>% dplyr::select_if(is.numeric) %>% base::colnames()
+    mapping_file() %>%
+      dplyr::select_if(is.numeric) %>%
+      base::colnames()
   })
 
   # Panel 2:  Print OTU table ---------
@@ -148,6 +167,7 @@ server <- function(input, output)({
   output$print_taxon_table <- renderDataTable({
     taxonomy_table() %>% select(sum.taxonomy, everything())
   }, options = list(pageLength = 5))
+
   output$print_metadata_table <- renderDataTable({
     mapping_file()
   }, options = list(pageLength = 5))
@@ -159,14 +179,16 @@ server <- function(input, output)({
   # If a sample has an NA for the selected variable, get rid of it from the
   # sample data and from the metadata and from the taxon table (the subset function does both)
   data_subset_unrare <- reactive({
-    p2 <- physeq()
-    sample_data(p2) <- physeq() %>% sample_data %>% subset(., !is.na(get(input$var)))
+    p2 <- physeq_object()
+    sample_data(p2) <- physeq_object() %>%
+      sample_data %>%
+      subset(., !is.na(get(input$var)))
     p2
   })
 
   # rarefy the subsetted dataset
   data_subset <- reactive({
-    if(!(input$rare_method == "none")){
+    if (!(input$rare_method == "none")) {
 
     custom_rarefaction(data_subset_unrare(),
                        sample_size = input$rarefaction_depth,
@@ -178,17 +200,21 @@ server <- function(input, output)({
 
   # Rarefaction curve before and after rarefaction
   output$rarefaction_ur <- renderPlotly({
-    p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
+    p <- ggrare(data_subset_unrare(), step = 1000, se = FALSE, color = input$var)
     q <- p + theme_ranacapa() + theme(axis.title = element_blank())
     gp <- ggplotly(tooltip = c("Sample", input$var)) %>%
-      layout(yaxis = list(title = "Species Richness", titlefont = list(size = 16)), xaxis = list(title = "Sequence Sample Size", titlefont = list(size = 16)), margin = list(l = 100, b = 60))
+      layout(yaxis = list(title = "Species Richness", titlefont = list(size = 16)),
+             xaxis = list(title = "Sequence Sample Size", titlefont = list(size = 16)),
+             margin = list(l = 100, b = 60))
     gp
   })
 
   output$rarefaction_r <- renderPlotly({
-    p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
-    q <- p +  facet_wrap(as.formula(paste("~", input$var))) +
-      theme_ranacapa() + theme(axis.text.x = element_text(angle = 45))
+    p <- ggrare(data_subset(), step = 1000, se = FALSE, color = input$var)
+    q <- p +
+      facet_wrap(as.formula(paste("~", input$var))) +
+      theme_ranacapa() +
+      theme(axis.text.x = element_text(angle = 45))
     gp <- ggplotly(tooltip = c("Sample", input$var))
     gp[['x']][['layout']][['annotations']][[2]][['x']] <- -0.07  # adjust y axis title (actually an annotation)
     gp[['x']][['layout']][['annotations']][[1]][['y']] <- -0.15  # adjust x axis title (actually an annotation)
@@ -203,15 +229,17 @@ server <- function(input, output)({
   # Alpha diversity boxplots
   output$alpharichness <- renderPlotly({
     color <- "black"; shape <- "circle"
-    p <- plot_richness(data_subset(), x = input$var,  measures= input$divtype,
+    p <- plot_richness(data_subset(), x = input$var,  measures = input$divtype,
                        color = input$var, shape = input$var)
 
     alpha_angle <- reactive({
-      if(!input$rotate_x){ 0 } else { 45 }
+      if (!input$rotate_x) { 0 } else { 45 }
     })
 
-    q <- p + geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
-      theme_ranacapa() + theme(legend.position = "none") +
+    q <- p +
+      geom_boxplot(aes_string(fill = input$var, alpha = 0.2, show.legend = F)) +
+      theme_ranacapa() +
+      theme(legend.position = "none") +
       theme(axis.title = element_blank()) +
       theme(axis.text.x = element_text(angle = alpha_angle()))
     gp <- ggplotly(tooltip = c("x", "value")) %>%
@@ -241,7 +269,7 @@ server <- function(input, output)({
   # Panel 5: Beta Diversity exploration plots ------------
   # NMDS plotly
   output$betanmdsplotly <- renderPlotly({
-    d <- distance(data_subset(), method=input$dissimMethod)
+    d <- distance(data_subset(), method = input$dissimMethod)
     ord <- ordinate(data_subset(), method = "MDS", distance = d)
     nmdsplot <- plot_ordination(data_subset(), ord, input$var,
                                 color = input$var, shape = input$var) +
@@ -257,12 +285,13 @@ server <- function(input, output)({
 
   # Other beta diversity plot
   output$dissimMap <- renderPlot({
-    d <- distance(data_subset(), method=input$dissimMethod)
+    d <- distance(data_subset(), method = input$dissimMethod)
 
     # Ward linkage map
     wcluster <- as.dendrogram(hclust(d, method = "ward.D2"))
     wl <- ggdendro::ggdendrogram(wcluster, theme_dendro = FALSE, color = "red")  +
-      theme_bw(base_size = 18)  + theme_ranacapa() +
+      theme_bw(base_size = 18) +
+      theme_ranacapa() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 15))
     # Plot it
     wl
@@ -292,7 +321,7 @@ server <- function(input, output)({
   output$pairwiseAdonis <- renderPrint({
     sdf <- as(sample_data(data_subset()), "data.frame")
     veganComm <- vegan_otu(data_subset())
-    pairwise_adonis(veganComm,getElement(sdf, input$var),
+    pairwise_adonis(veganComm, getElement(sdf, input$var),
                     sim_method = input$dissimMethod)
   })
 
@@ -302,13 +331,14 @@ server <- function(input, output)({
   output$tax_bar <- renderPlotly({
 
     ## NOTE!
-    # Think more about whether we should use physeq() or data_subset_unrare() here
-    if(input$rared_taxplots == "unrarefied"){
+    # Think more about whether we should use physeq_object() or data_subset_unrare() here
+    if (input$rared_taxplots == "unrarefied") {
       physeqGlommed = tax_glom(data_subset_unrare(), input$taxon_level)
-    } else{
+    } else {
       physeqGlommed = tax_glom(data_subset(), input$taxon_level)
     }
-    plot_bar(physeqGlommed, fill = input$taxon_level) + theme_ranacapa() +
+    plot_bar(physeqGlommed, fill = input$taxon_level) +
+      theme_ranacapa() +
       theme(axis.text.x = element_text(angle = 45)) +
       theme(axis.title = element_blank())
     gp <- ggplotly() %>%
@@ -321,15 +351,17 @@ server <- function(input, output)({
   ## Panel 8: Heatmap of taxonomy by site ---------
   output$tax_heat <- renderPlotly({
 
-    if(input$rared_taxplots == "unrarefied"){
+    if (input$rared_taxplots == "unrarefied") {
       tt <-  data.frame(otu_table(data_subset_unrare()))
 
     } else {
       tt <- data.frame(otu_table(data_subset()))
 
     }
-    for_hm <- cbind(tt, colsplit(rownames(tt), ";",
-                                 names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
+    for_hm <- cbind(tt,
+                    colsplit(rownames(tt),
+                             ";",
+                             names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
 
     for_hm <- for_hm %>%
       mutate(Phylum = ifelse(is.na(Phylum) | Phylum == "", "unknown", Phylum)) %>%
@@ -339,8 +371,11 @@ server <- function(input, output)({
       mutate(Genus = ifelse(is.na(Genus) | Genus == "", "unknown", Genus)) %>%
       mutate(Species = ifelse(is.na(Species)| Species == "", "unknown", Species))
 
-    for_hm <- for_hm %>% group_by(get(input$taxon_level)) %>% summarize_if(is.numeric, sum) %>%
-      data.frame %>% column_to_rownames("get.input.taxon_level.")
+    for_hm <- for_hm %>%
+      group_by(get(input$taxon_level)) %>%
+      summarize_if(is.numeric, sum) %>%
+      data.frame %>%
+      column_to_rownames("get.input.taxon_level.")
     for_hm[for_hm == 0] <- NA
     heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = F, grid_gap = 1, na.value = "white")
 
