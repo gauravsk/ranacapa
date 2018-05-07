@@ -18,7 +18,7 @@ options(digits = 5, shiny.maxRequestSize = 10 * 1024 ^ 2)
 server <- function(input, output)({
 
   # Setup and RenderUIs ---------------
-  # RenderUI for which_variable_r, gets used in Panels 1, 3,4,5,6
+  # RenderUI for which_variable_r, gets used in Panels 1, 3, 4, 5, 6
   output$which_variable_r <- renderUI({
     selectInput("var", "Select the variable", choices = heads())
   })
@@ -191,7 +191,7 @@ server <- function(input, output)({
     p2
   })
 
-  # rarefy the subsetted dataset
+  # Rarefy the subsetted dataset
   data_subset <- reactive({
     if (!(input$rare_method == "none")) {
 
