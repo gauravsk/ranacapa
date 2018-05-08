@@ -113,7 +113,8 @@ server <- function(input, output)({
       if (grepl(input$in_biom$datapath, pattern = ".txt") |
           grepl(input$in_biom$datapath, pattern = ".tsv")) {
         read.table(input$in_biom$datapath, header = 1,
-                   sep = "\t", stringsAsFactors = F) %>%
+                   sep = "\t", stringsAsFactors = F,
+                   quote = "", comment.char = "") %>%
           scrub_seqNum_column() %>%
           group_anacapa_by_taxonomy()
       } else if (grepl(input$in_biom$datapath, pattern = ".biom")) {
@@ -136,7 +137,9 @@ server <- function(input, output)({
           as.matrix() %>%
           as.data.frame()
       } else {
-        read.table(input$in_metadata$datapath, header = 1, sep = "\t", stringsAsFactors = F)
+        read.table(input$in_metadata$datapath,
+                   header = 1, sep = "\t", stringsAsFactors = F,
+                   quote = "", comment.char = "")
       }
     } else {
       readRDS("data/demo_metadata.Rds")
