@@ -52,7 +52,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
     tabsetPanel(
       tabPanel("Data Import", value = 1,
 
-               h2("Please verify that the files below look as expected, and run the Go button below!"),
+               h2("Please verify that the files below look as expected, and click the RUN THE APP button below to get started!"),
 
                h4("Input taxonomy file"),
                dataTableOutput("print_taxon_table"),
