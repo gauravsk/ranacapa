@@ -132,7 +132,7 @@ server <- function(input, output)({
 
   mapping_file <- reactive({
     if (input$mode == "Custom") {
-      if (grepl(readLines("~/grad/temp/metadata.tsv", n = 1), pattern = "^#")) {
+      if (grepl(readLines(input$in_metadata$datapath, n = 1), pattern = "^#")) {
         phyloseq::import_qiime_sample_data(input$in_metadata$datapath) %>%
           as.matrix() %>%
           as.data.frame()
