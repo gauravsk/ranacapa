@@ -29,5 +29,6 @@ Imports:
     methods,
     ggdendro,
     stringr,
-    markdown
+    markdown,
+    DT
 Suggests: testthat

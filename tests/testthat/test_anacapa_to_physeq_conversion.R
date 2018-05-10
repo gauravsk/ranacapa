@@ -47,7 +47,7 @@ bad_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
 
 testthat::test_that("conversion to physeq object breaks for bad files", {
   expect_error(convert_anacapa_to_phyloseq(bad_taxon_table, good_maps),
-               "Please make sure that each sample in your biom table has a corresponding row in the mapping file!")
+               "Please make sure that each sample in your taxon table has a corresponding row in the mapping file!")
 })
 
 # make sure that the taxon table is grouped by taxonomy during the conversion --------

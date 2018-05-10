@@ -3,7 +3,7 @@
 \name{scrub_seqNum_column}
 \alias{scrub_seqNum_column}
 \title{Remove "xxx_seq_number" column from ana_taxon_table file if it exists
-takes one biom table as its input, and if it include
+takes one taxon table as its input, and if it include
 a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 any longer}
 \usage{
@@ -17,7 +17,7 @@ ana_taxon_table file, with "xxx_seq_number" column removed (if it existed)
 }
 \description{
 Remove "xxx_seq_number" column from ana_taxon_table file if it exists
-takes one biom table as its input, and if it include
+takes one taxon table as its input, and if it include
 a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 any longer
 }

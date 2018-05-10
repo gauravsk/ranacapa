@@ -3,7 +3,7 @@
 \name{validate_input_files}
 \alias{validate_input_files}
 \title{Verify that the input taxon_table file and the input mapping file meets specificationss
-validate_input_biom takes one biom table as its input, and verfies that it meets
+The function takes one taxon table as its input, and verfies that it meets
 the expected standards.
 The standards incude:
 1. Column names exist.
@@ -21,7 +21,7 @@ validate_input_files(taxon_table, metadata_file)
 }
 \description{
 Verify that the input taxon_table file and the input mapping file meets specificationss
-validate_input_biom takes one biom table as its input, and verfies that it meets
+The function takes one taxon table as its input, and verfies that it meets
 the expected standards.
 The standards incude:
 1. Column names exist.
