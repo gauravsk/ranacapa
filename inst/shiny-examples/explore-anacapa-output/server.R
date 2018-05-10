@@ -98,19 +98,18 @@ server <- function(input, output)({
                   } else { # no rarefaction requested
                   }
   })
-  output$rare_reps <- renderUI({
-    if (!(input$rare_method == "none")) {
-        sliderInput("rarefaction_reps",
-                    label = "Select the number of times to rarefy",
-                    min = 2,
-                    max = 20,
-                    value = 2)
-    } else {}
-  })
+  # output$rare_reps <- renderUI({
+  #   if (!(input$rare_method == "none")) {
+  #       sliderInput("rarefaction_reps",
+  #                   label = "Select the number of times to rarefy",
+  #                   min = 2,
+  #                   max = 20,
+  #                   value = 2)
+  #   } else {}
+  # })
 
-  ########################################################
-  # Read in data files, validate and make the physeq object
-  ########################################################
+  # Read in data files, validate and make the physeq object -----
+
   taxonomy_table <- reactive({
     if (input$mode == "Custom") {
       if (grepl(input$in_taxon_table$datapath, pattern = ".txt") |
@@ -217,7 +216,7 @@ server <- function(input, output)({
   output$rarefaction_ur <- renderPlotly({
 
     withProgress(message = 'Rendering unrarefied accumulation curve', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
       p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
       q <- p + theme_ranacapa() + theme(axis.title = element_blank())
       gp <- ggplotly(tooltip = c("Sample", input$var)) %>%
@@ -231,7 +230,7 @@ server <- function(input, output)({
 
   output$rarefaction_r <- renderPlotly({
     withProgress(message = 'Rendering rarified accumulation curve', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
 
       p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
       q <- p +
@@ -251,7 +250,7 @@ server <- function(input, output)({
   output$alpharichness <- renderPlotly({
 
     withProgress(message = 'Rendering alpha diversity plot', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
       p <- plot_richness(data_subset(),
                          x = input$var,
                          measures= input$divtype,
@@ -296,7 +295,7 @@ server <- function(input, output)({
   # PCoA plotly
   output$betanmdsplotly <- renderPlotly({
     withProgress(message = 'Rendering beta diversity plot', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
 
       d <- distance(data_subset(), method=input$dissimMethod)
       ord <- ordinate(data_subset(), method = "MDS", distance = d)
@@ -360,7 +359,7 @@ server <- function(input, output)({
   output$tax_bar <- renderPlotly({
 
     withProgress(message = 'Rendering taxonomy barplot', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
 
       if (input$rared_taxplots == "unrarefied") {
         physeqGlommed = tax_glom(data_subset_unrare(), input$taxon_level)
@@ -382,7 +381,7 @@ server <- function(input, output)({
   output$tax_heat <- renderPlotly({
 
     withProgress(message = 'Rendering taxonomy heatmap', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
 
 
       if (input$rared_taxplots == "unrarefied") {
