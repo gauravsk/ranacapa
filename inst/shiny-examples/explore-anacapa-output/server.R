@@ -27,7 +27,7 @@ server <- function(input, output)({
   output$biomSelect <- renderUI({
     req(input$mode)
     if (input$mode == "Custom") {
-      fileInput("in_biom", "Please select your taxonomy table.
+      fileInput("in_taxon_table", "Please select your taxonomy table.
                 Note: this should be saved either as *.biom or *.txt",
                 accept = c(".biom", ".txt", ".tsv"))
     }
@@ -78,7 +78,10 @@ server <- function(input, output)({
     if (input$rare_method == "custom") {
       sliderInput("rarefaction_depth",
                   label = "Select a depth of rarefaction",
-                  min = 2000,
+                  min = taxonomy_table() %>%
+                    select_if(is.numeric) %>%
+                    colSums() %>%
+                    min(),
                   max = taxonomy_table() %>%
                     select_if(is.numeric) %>%
                     colSums() %>%
@@ -95,36 +98,35 @@ server <- function(input, output)({
                   } else { # no rarefaction requested
                   }
   })
-  output$rare_reps <- renderUI({
-    if (!(input$rare_method == "none")) {
-        sliderInput("rarefaction_reps",
-                    label = "Select the number of times to rarefy",
-                    min = 2,
-                    max = 20,
-                    value = 2)
-    } else {}
-  })
+  # output$rare_reps <- renderUI({
+  #   if (!(input$rare_method == "none")) {
+  #       sliderInput("rarefaction_reps",
+  #                   label = "Select the number of times to rarefy",
+  #                   min = 2,
+  #                   max = 20,
+  #                   value = 2)
+  #   } else {}
+  # })
 
-  ########################################################
-  # Read in data files, validate and make the physeq object
-  ########################################################
+  # Read in data files, validate and make the physeq object -----
+
   taxonomy_table <- reactive({
     if (input$mode == "Custom") {
-      if (grepl(input$in_biom$datapath, pattern = ".txt") |
-          grepl(input$in_biom$datapath, pattern = ".tsv")) {
-        read.table(input$in_biom$datapath, header = 1,
+      if (grepl(input$in_taxon_table$datapath, pattern = ".txt") |
+          grepl(input$in_taxon_table$datapath, pattern = ".tsv")) {
+        read.table(input$in_taxon_table$datapath, header = 1,
                    sep = "\t", stringsAsFactors = F,
                    quote = "", comment.char = "") %>%
           scrub_seqNum_column() %>%
           group_anacapa_by_taxonomy()
-      } else if (grepl(input$in_biom$datapath, pattern = ".biom")) {
-        phyloseq::import_biom(input$in_biom$datapath) %>%
+      } else if (grepl(input$in_taxon_table$datapath, pattern = ".biom")) {
+        phyloseq::import_biom(input$in_taxon_table$datapath) %>%
           convert_biom_to_taxon_table() %>%
           scrub_seqNum_column() %>%
           group_anacapa_by_taxonomy()
       }
     } else {
-      readRDS("data/demo_biomdata.Rds") %>%
+      readRDS("data/demo_taxonTable.Rds") %>%
         scrub_seqNum_column() %>%
         group_anacapa_by_taxonomy()
     }
@@ -173,13 +175,15 @@ server <- function(input, output)({
       base::colnames()
   })
 
-  # Panel 2:  Print OTU table ---------
+  # Panel 2:  Print taxon table ---------
 
-  output$print_taxon_table <- renderDataTable({
-    taxonomy_table() %>% select(sum.taxonomy, everything())
-  }, options = list(pageLength = 5))
-  output$print_metadata_table <- renderDataTable({
-    mapping_file()
+  output$print_taxon_table <- DT::renderDataTable({
+    table <- taxonomy_table() %>% select(sum.taxonomy, everything())
+
+    DT::datatable(table, options = list(scrollX = TRUE))
+  })
+  output$print_metadata_table <- DT::renderDataTable({
+    DT::datatable(mapping_file(), options = list(scrollX = TRUE))
   }, options = list(pageLength = 5))
 
 
@@ -190,7 +194,9 @@ server <- function(input, output)({
   # sample data and from the metadata and from the taxon table (the subset function does both)
   data_subset_unrare <- reactive({
     p2 <- physeq()
-    sample_data(p2) <- physeq() %>% sample_data %>% subset(., !is.na(get(input$var)))
+    sample_data(p2) <- physeq() %>%
+      sample_data %>%
+      subset(., !is.na(get(input$var)))
     p2
   })
 
@@ -200,7 +206,7 @@ server <- function(input, output)({
 
     custom_rarefaction(data_subset_unrare(),
                        sample_size = input$rarefaction_depth,
-                       replicates = input$rarefaction_reps)
+                       replicates = 1)
     } else {
       data_subset_unrare()
     }
@@ -210,7 +216,7 @@ server <- function(input, output)({
   output$rarefaction_ur <- renderPlotly({
 
     withProgress(message = 'Rendering unrarefied accumulation curve', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
       p <- ggrare(data_subset_unrare(), step = 1000, se=FALSE, color = input$var)
       q <- p + theme_ranacapa() + theme(axis.title = element_blank())
       gp <- ggplotly(tooltip = c("Sample", input$var)) %>%
@@ -224,7 +230,7 @@ server <- function(input, output)({
 
   output$rarefaction_r <- renderPlotly({
     withProgress(message = 'Rendering rarified accumulation curve', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
 
       p <- ggrare(data_subset(), step = 1000, se=FALSE, color = input$var)
       q <- p +
@@ -234,8 +240,6 @@ server <- function(input, output)({
       gp <- ggplotly(tooltip = c("Sample", input$var))
       gp[['x']][['layout']][['annotations']][[2]][['x']] <- -0.07  # adjust y axis title (actually an annotation)
       gp[['x']][['layout']][['annotations']][[1]][['y']] <- -0.15  # adjust x axis title (actually an annotation)
-      # this doesn't work right now, but still need to figure out how to not cut off legend title
-      # gp[['x']][['layout']][['annotations']][[3]][['x']] <- 0.23  # adjust legend title (actually an annotation)
       gp %>% layout(margin = list(l = 80, b = 100, r = 20)) })
   })
 
@@ -246,7 +250,7 @@ server <- function(input, output)({
   output$alpharichness <- renderPlotly({
 
     withProgress(message = 'Rendering alpha diversity plot', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
       p <- plot_richness(data_subset(),
                          x = input$var,
                          measures= input$divtype,
@@ -288,21 +292,21 @@ server <- function(input, output)({
   }, digits = 4)
 
   # Panel 5: Beta Diversity exploration plots ------------
-  # NMDS plotly
+  # PCoA plotly
   output$betanmdsplotly <- renderPlotly({
     withProgress(message = 'Rendering beta diversity plot', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
 
       d <- distance(data_subset(), method=input$dissimMethod)
       ord <- ordinate(data_subset(), method = "MDS", distance = d)
       nmdsplot <- plot_ordination(data_subset(), ord, input$var,
                                   color = input$var, shape = input$var) +
-        # stat_ellipse(type = "t", geom = "polygon", alpha = 0.2) +
-        ggtitle(paste(input$var, "NMDS; dissimilarity method:",
+        ggtitle(paste(input$var, "PCoA; dissimilarity method:",
                       tools::toTitleCase(input$dissimMethod))) +
         theme(plot.title = element_text(hjust = 0.5)) +
         theme_ranacapa()
-      ggplotly(tooltip = c(input$var, "x", "y")) %>% layout(hovermode = 'closest')
+      ggplotly(tooltip = c(input$var, "x", "y")) %>%
+        layout(hovermode = 'closest')
     })
   })
 
@@ -314,12 +318,11 @@ server <- function(input, output)({
 
     # Ward linkage map
     wcluster <- as.dendrogram(hclust(d, method = "ward.D2"))
-    wl <- ggdendro::ggdendrogram(wcluster, theme_dendro = FALSE, color = "red")  +
+    ggdendro::ggdendrogram(wcluster, theme_dendro = FALSE, color = "red")  +
       theme_bw(base_size = 18)  +
       theme_ranacapa() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 15))
-    # Plot it
-    wl
+
 
   }, height = 500, width = 750 )
 
@@ -356,7 +359,7 @@ server <- function(input, output)({
   output$tax_bar <- renderPlotly({
 
     withProgress(message = 'Rendering taxonomy barplot', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
 
       if (input$rared_taxplots == "unrarefied") {
         physeqGlommed = tax_glom(data_subset_unrare(), input$taxon_level)
@@ -378,7 +381,7 @@ server <- function(input, output)({
   output$tax_heat <- renderPlotly({
 
     withProgress(message = 'Rendering taxonomy heatmap', value = 0, {
-      incProgress(0.1)
+      incProgress(0.5)
 
 
       if (input$rared_taxplots == "unrarefied") {

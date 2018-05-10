@@ -7,7 +7,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
   sidebarPanel(
 
     ## conditionalPanel() functions for selected tab
-
+    conditionalPanel(condition = "input.tabselected == -999"),
     # For Panel 1, have an input option
     conditionalPanel(condition = "input.tabselected == 1",
                      radioButtons("mode", label = "Run with demo data or custom dataset?",
@@ -27,7 +27,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                                   choices = c("custom", "minimum", "none")),
                      uiOutput("rare_depth")),
      # On panel 3, also ask how many replicate rarefactions should be done
-    conditionalPanel(condition = "input.tabselected == 2", uiOutput("rare_reps")),
+    # conditionalPanel(condition = "input.tabselected == 2", uiOutput("rare_reps")),
 
     # On panel 4 (alpha diversity), ask whether users want observed or Shannon div stats
     conditionalPanel(condition = "input.tabselected == 3", uiOutput("which_divtype")),
@@ -50,14 +50,19 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
 
   mainPanel(
     tabsetPanel(
+      tabPanel("Welcome!", value = -999,
+               includeMarkdown("docs/welcome-page.md")#,
+              # img(src="assembly2.png", align = "center")
+              ),
+
       tabPanel("Data Import", value = 1,
 
                h2("Please verify that the files below look as expected, and click the RUN THE APP button below to get started!"),
 
                h4("Input taxonomy file"),
-               dataTableOutput("print_taxon_table"),
+               DT::dataTableOutput("print_taxon_table"),
                h4("Input metadata file"),
-               dataTableOutput("print_metadata_table"),
+               DT::dataTableOutput("print_metadata_table"),
 
                h4("Select any continuous variables that you want to treat as categorical for this analysis"),
                uiOutput("numericColnames"),
@@ -73,33 +78,33 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                h3("Unrarefied samples - taxon accumulation"),
                plotlyOutput("rarefaction_ur"),
                h3("Rarefied samples"),
-               plotlyOutput("rarefaction_r")),
+               plotlyOutput("rarefaction_r"), height = "1000px"),
 
       tabPanel("Alpha Diversity", value = 3,
                includeMarkdown("docs/alpha-div-overview.md"),
                plotlyOutput("alpharichness"),
-               h4("Alpha Diversity AOV"),
+               includeMarkdown("docs/alpha-div-anova.md"),
                tableOutput("alphaDivAOV"),
-               br(),
+               includeMarkdown("docs/alpha-div-tukey.md"),
                h4("Alpha Diversity Tukey Tests"),
-               tableOutput("alphaDivTukey"),
-               h3("More resources on alpha diversity"),
-               p(a("Measurements of Biodiversity",
-                   href = "http://www.marinespecies.org/introduced/wiki/Measurements_of_biodiversity"))),
+               tableOutput("alphaDivTukey")),
 
       # beta Diversity panels - first, just plots
       tabPanel("Beta Diversity exploration", value = 4,
                includeMarkdown("docs/beta-div-overview.md"),
                h4("PCoA plot"),
                plotlyOutput("betanmdsplotly"),
+               includeMarkdown("docs/beta-div-clustering.md"),
                plotOutput("dissimMap")),
 
       # beta Diversity panels- second, just stats
       tabPanel("Beta Diversity stats", value = 5,
+               includeMarkdown("docs/beta-div-adonis.md"),
                h3("Adonis table"),
                tableOutput("adonisTable"),
                h4("Pairwise adonis"),
                verbatimTextOutput("pairwiseAdonis"),
+               includeMarkdown("docs/beta-div-disper.md"),
                h3("Multivariate homogeneity of groups dispersions"),
                verbatimTextOutput("permTestTable"),
                h4("Multivariate homogeneity of groups dispersions - Post-hoc Tukey"),
@@ -111,5 +116,5 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
 
       id = "tabselected"
     )
-  )
+ )
 ))

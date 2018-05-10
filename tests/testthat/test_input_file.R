@@ -42,15 +42,15 @@ maps_extra_site <- data.frame(site = c("site_1", "site_2", "site_3"),
 testthat::test_that("various broken versions of input files break the validator", {
   # taxon files with no column names shouldn't work
   expect_error(validate_input_files(taxon_table_no_colNames, good_maps),
-               "The input biom table should have column names. The taxonomy column should be named 'sum.taxonomy'; the rest of the columns should be named according to their sample names.")
+               "The input taxon table should have column names. The taxonomy column should be named 'sum.taxonomy'; the rest of the columns should be named according to their sample names.")
 
   # taxon files without a column named "sum.taxonomy" sholdn't work
   expect_error(validate_input_files(taxon_table_no_sum.tax, good_maps),
-               "Please make sure that the taxonomy column in the input biom table is called 'sum.taxonomy'!")
+               "Please make sure that the taxonomy column in the input taxon table is named 'sum.taxonomy'!")
 
   # taxon files with a "xxx_seq_number" column shouldn't work
   expect_error(validate_input_files(taxon_table_seq_numberCol, good_maps),
-               "Please makes sure that you have removed the 'xxx_seq_number' column from the dataset (note: this can be done with the function `scrub_seqNum_column`)", fixed = TRUE)
+               "Please makes sure that you have removed the 'xxx_seq_number' column from the taxon table (note: this can be done with the function `scrub_seqNum_column`)", fixed = TRUE)
 
   # taxon files that contain non-numeric data should return an error
   expect_error(validate_input_files(taxon_table_non_numeric_columns, good_maps),
@@ -58,7 +58,7 @@ testthat::test_that("various broken versions of input files break the validator"
 
   # all sites in taxon file should be represented in metadata file
   expect_error(validate_input_files(taxon_table_extra_site, good_maps),
-               "Please make sure that each sample in your biom table has a corresponding row in the mapping file!")
+               "Please make sure that each sample in your taxon table has a corresponding row in the mapping file!")
 })
 
 testthat::test_that("clean versions of input files return null", {
