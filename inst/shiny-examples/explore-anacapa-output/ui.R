@@ -27,7 +27,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                                   choices = c("custom", "minimum", "none")),
                      uiOutput("rare_depth")),
      # On panel 3, also ask how many replicate rarefactions should be done
-    # conditionalPanel(condition = "input.tabselected == 2", uiOutput("rare_reps")),
+    conditionalPanel(condition = "input.tabselected == 2", uiOutput("rare_reps")),
 
     # On panel 4 (alpha diversity), ask whether users want observed or Shannon div stats
     conditionalPanel(condition = "input.tabselected == 3", uiOutput("which_divtype")),

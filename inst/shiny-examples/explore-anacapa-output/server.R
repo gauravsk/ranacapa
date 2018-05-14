@@ -98,15 +98,15 @@ server <- function(input, output)({
                   } else { # no rarefaction requested
                   }
   })
-  # output$rare_reps <- renderUI({
-  #   if (!(input$rare_method == "none")) {
-  #       sliderInput("rarefaction_reps",
-  #                   label = "Select the number of times to rarefy",
-  #                   min = 2,
-  #                   max = 20,
-  #                   value = 2)
-  #   } else {}
-  # })
+  output$rare_reps <- renderUI({
+    if (!(input$rare_method == "none")) {
+        sliderInput("rarefaction_reps",
+                    label = "Select the number of times to rarefy",
+                    min = 2,
+                    max = 20,
+                    value = 2)
+    } else {}
+  })
 
   # Read in data files, validate and make the physeq object -----
 
@@ -206,7 +206,7 @@ server <- function(input, output)({
 
     custom_rarefaction(data_subset_unrare(),
                        sample_size = input$rarefaction_depth,
-                       replicates = 1)
+                       replicates = input$rarefaction_reps)
     } else {
       data_subset_unrare()
     }
@@ -276,7 +276,7 @@ server <- function(input, output)({
 
   # Alpha diversity aov generation
   alpha_anova <- reactive({
-    alpha.diversity <- estimate_richness(data_subset(), measures = c("Observed", "Shannon"))
+    alpha.diversity <- estimate_richness(data_subset_unrare(), measures = c("Observed", "Shannon"))
     data <- cbind(sample_data(data_subset()), alpha.diversity)
     aov(as.formula(paste(input$divtype, "~" , input$var)), data)
   })
