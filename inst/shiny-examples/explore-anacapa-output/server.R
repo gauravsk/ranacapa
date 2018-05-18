@@ -73,6 +73,14 @@ server <- function(input, output)({
 
   })
 
+
+  choices <- reactive({
+    c("Select All", rownames(for_hm()))
+  })
+  output$select_species_heat <- renderUI({
+    selectInput('which_taxa_heat', 'Select taxa to visualize', choices(),
+                multiple=TRUE, selectize=FALSE, selected = "Select All")
+  })
   # Render UIs for Panel 3 (Rarefaction)
   output$rare_depth <- renderUI({
     if (input$rare_method == "custom") {
@@ -276,7 +284,7 @@ server <- function(input, output)({
 
   # Alpha diversity aov generation
   alpha_anova <- reactive({
-    alpha.diversity <- estimate_richness(data_subset_unrare(), measures = c("Observed", "Shannon"))
+    alpha.diversity <- estimate_1richness(data_subset_unrare(), measures = c("Observed", "Shannon"))
     data <- cbind(sample_data(data_subset()), alpha.diversity)
     aov(as.formula(paste(input$divtype, "~" , input$var)), data)
   })
@@ -377,38 +385,50 @@ server <- function(input, output)({
     })
   })
 
+
   ## Panel 8: Heatmap of taxonomy by site ---------
+  for_hm <- reactive({
+    if (input$rared_taxplots == "unrarefied") {
+      tt <-  data.frame(otu_table(data_subset_unrare()))
+
+    } else {
+      tt <- data.frame(otu_table(data_subset()))
+
+    }
+    for_hm <- cbind(tt, colsplit(rownames(tt), ";",
+                                 names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
+
+    for_hm <- for_hm %>%
+      mutate(Phylum = ifelse(is.na(Phylum) | Phylum == "", "unknown", Phylum)) %>%
+      mutate(Class = ifelse(is.na(Class) | Class == "", "unknown", Class)) %>%
+      mutate(Order = ifelse(is.na(Order) | Order == "", "unknown", Order)) %>%
+      mutate(Family = ifelse(is.na(Family) | Family == "", "unknown", Family)) %>%
+      mutate(Genus = ifelse(is.na(Genus) | Genus == "", "unknown", Genus)) %>%
+      mutate(Species = ifelse(is.na(Species)| Species == "", "unknown", Species))
+
+    for_hm <- for_hm %>%
+      group_by(get(input$taxon_level)) %>%
+      # group_by(Species) %>%
+      summarize_if(is.numeric, sum) %>%
+      data.frame %>%
+      column_to_rownames("get.input.taxon_level.")
+        # column_to_rownames("Species")
+    for_hm <- for_hm[which(rowSums(for_hm) > 0),]
+    for_hm[for_hm == 0] <- NA
+    for_hm
+  })
   output$tax_heat <- renderPlotly({
 
     withProgress(message = 'Rendering taxonomy heatmap', value = 0, {
       incProgress(0.5)
-
-
-      if (input$rared_taxplots == "unrarefied") {
-        tt <-  data.frame(otu_table(data_subset_unrare()))
-
-      } else {
-        tt <- data.frame(otu_table(data_subset()))
-
+      if("Select All" %in% input$which_taxa_heat){
+        selected_taxa <- rownames(for_hm())
+      } else{
+        selected_taxa <- input$which_taxa_heat
       }
-      for_hm <- cbind(tt, colsplit(rownames(tt), ";",
-                                   names = c("Phylum", "Class", "Order", "Family", "Genus", "Species")))
-
-      for_hm <- for_hm %>%
-        mutate(Phylum = ifelse(is.na(Phylum) | Phylum == "", "unknown", Phylum)) %>%
-        mutate(Class = ifelse(is.na(Class) | Class == "", "unknown", Class)) %>%
-        mutate(Order = ifelse(is.na(Order) | Order == "", "unknown", Order)) %>%
-        mutate(Family = ifelse(is.na(Family) | Family == "", "unknown", Family)) %>%
-        mutate(Genus = ifelse(is.na(Genus) | Genus == "", "unknown", Genus)) %>%
-        mutate(Species = ifelse(is.na(Species)| Species == "", "unknown", Species))
-
-      for_hm <- for_hm %>%
-        group_by(get(input$taxon_level)) %>%
-        summarize_if(is.numeric, sum) %>%
-        data.frame %>%
-        column_to_rownames("get.input.taxon_level.")
-      for_hm[for_hm == 0] <- NA
-      heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = F, grid_gap = 1, na.value = "white", key.title = "Number of \nSequences in \nSample")
+      for_hm <- for_hm()[selected_taxa,]
+      heatmaply(for_hm, Rowv = F, Colv = F, hide_colorbar = F,
+                grid_gap = 1, na.value = "white", key.title = "Number of \nSequences in \nSample")
     })
 
   })
