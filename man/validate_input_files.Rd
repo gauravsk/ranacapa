@@ -15,7 +15,7 @@ The standards incude:
 validate_input_files(taxon_table, metadata_file)
 }
 \arguments{
-\item{taxon_table}{OTU table from Anacapa}
+\item{taxon_table}{taxonomy table from Anacapa}
 
 \item{metadata_file}{Qiime-style mapping}
 }

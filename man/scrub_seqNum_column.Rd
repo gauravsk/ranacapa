@@ -10,7 +10,7 @@ any longer}
 scrub_seqNum_column(taxon_table)
 }
 \arguments{
-\item{taxon_table}{OTU table from Anacapa}
+\item{taxon_table}{taxonomy table from Anacapa}
 }
 \value{
 ana_taxon_table file, with "xxx_seq_number" column removed (if it existed)

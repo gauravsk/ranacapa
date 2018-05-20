@@ -126,6 +126,7 @@ server <- function(input, output)({
                    sep = "\t", stringsAsFactors = F,
                    quote = "", comment.char = "") %>%
           scrub_seqNum_column() %>%
+          scrub_taxon_paths () %>%
           group_anacapa_by_taxonomy()
       } else if (grepl(input$in_taxon_table$datapath, pattern = ".biom")) {
         phyloseq::import_biom(input$in_taxon_table$datapath) %>%
@@ -136,6 +137,7 @@ server <- function(input, output)({
     } else {
       readRDS("data/demo_taxonTable.Rds") %>%
         scrub_seqNum_column() %>%
+        scrub_taxon_paths () %>%
         group_anacapa_by_taxonomy()
     }
   })
