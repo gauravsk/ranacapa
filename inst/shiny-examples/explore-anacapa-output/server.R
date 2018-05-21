@@ -286,7 +286,7 @@ server <- function(input, output)({
 
   # Alpha diversity aov generation
   alpha_anova <- reactive({
-    alpha.diversity <- estimate_1richness(data_subset_unrare(), measures = c("Observed", "Shannon"))
+    alpha.diversity <- estimate_richness(data_subset_unrare(), measures = c("Observed", "Shannon"))
     data <- cbind(sample_data(data_subset()), alpha.diversity)
     aov(as.formula(paste(input$divtype, "~" , input$var)), data)
   })
