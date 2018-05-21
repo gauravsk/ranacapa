@@ -1,8 +1,8 @@
 ## Background on alpha diversity
 
-In ecology, the term [alpha diversity](https://en.wikipedia.org/wiki/Alpha_diversity) refers simply to the diversity observed in a single sample. Although this may seem like a very simple concept, it turns out that there's many ways to consider diversity. The most obvious metric, of course, is simply to count the number of species found in a sample. This is the metric calculated with the 'Observed' option on the left.
+In ecology, the term [alpha diversity](https://en.wikipedia.org/wiki/Alpha_diversity) refers simply to the diversity observed in a single site (or a single sample). Although this may seem like a very simple concept, it turns out that there's many ways to consider diversity. The most obvious metric, of course, is simply to count the number of species found in a sample. This is the metric calculated with the 'Observed' option on the left.
 
-Beyond this obvious choice of just counting up the number of species, there's a variety of related metrics that can be used to calculate alpha diversity. Consider, for instance, the following situation:
+Beyond this obvious choice of counting up the number of species, there are a variety of related metrics that can be used to calculate alpha diversity. Consider, for instance, the following situation:
 
 You are comparing two communities. Each community has 3 species in it. In the first community, each species is represented by 100 individuals each; in the other, there are 290 individuals of Sp A, 9 of Sp B, and just 1 of Sp C. Clearly, there is something different about the diversity of these two communities even though they house the same number of species.
 
