@@ -22,7 +22,9 @@ server <- function(input, output)({
   output$which_variable_r <- renderUI({
     selectInput("var", "Select the variable", choices = heads())
   })
-
+  output$which_variable_alphaDiv <- renderUI({
+    selectInput("var_alpha", "Select the variable", choices = heads_alpha_Anova())
+  })
   # RenderUIs for Panel 1
   output$biomSelect <- renderUI({
     req(input$mode)
@@ -185,6 +187,11 @@ server <- function(input, output)({
       base::colnames()
   })
 
+  heads_alpha_Anova <- reactive({
+    num_factors <- sapply(mapping_file(), function(col) length(unique(col)))
+    heads()[num_factors > 2]
+  })
+
   # Panel 2:  Print taxon table ---------
 
   output$print_taxon_table <- DT::renderDataTable({
@@ -286,9 +293,9 @@ server <- function(input, output)({
 
   # Alpha diversity aov generation
   alpha_anova <- reactive({
-    alpha.diversity <- estimate_richness(data_subset_unrare(), measures = c("Observed", "Shannon"))
+    alpha.diversity <- estimate_richness(data_subset(), measures = c("Observed", "Shannon"))
     data <- cbind(sample_data(data_subset()), alpha.diversity)
-    aov(as.formula(paste(input$divtype, "~" , input$var)), data)
+    aov(as.formula(paste(input$divtype, "~" , input$var_alpha)), data)
   })
 
   # Alpha diversity AOV print

@@ -16,8 +16,8 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                      uiOutput("metaSelect")),
 
     # For panels 3, 4, 5, 6, ask user which varible they would like to visualize on
-    conditionalPanel(condition = "input.tabselected == 3 | input.tabselected == 4 |
-                     input.tabselected == 5 | input.tabselected == 2",
+    conditionalPanel(condition = "input.tabselected == 3 | input.tabselected == 5 |
+                     input.tabselected == 6 | input.tabselected == 2",
                      uiOutput("which_variable_r")),
 
     # On panel 3 (rarefaction), ask what depth they want to rarefy to
@@ -30,24 +30,27 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
     conditionalPanel(condition = "input.tabselected == 2", uiOutput("rare_reps")),
 
     # On panel 4 (alpha diversity), ask whether users want observed or Shannon div stats
-    conditionalPanel(condition = "input.tabselected == 3", uiOutput("which_divtype")),
+    conditionalPanel(condition = "input.tabselected == 3 | input.tabselected == 4", uiOutput("which_divtype")),
 
     # On panel 4 (alpha diversity), ask whether users want x-axis labels rotated
     conditionalPanel(condition = "input.tabselected == 3",
                      checkboxInput("rotate_x", label = "Select to rotate x-axis labels", value = F)),
 
     # On panel 5 (beta diersity),  ask whether users want to use NMDS or Bray disslimilarity
-    conditionalPanel(condition = "input.tabselected == 4 | input.tabselected == 5", uiOutput("which_dissim")),
+    conditionalPanel(condition = "input.tabselected == 5 | input.tabselected == 6", uiOutput("which_dissim")),
 
     # On panels 7 and 8 (barplot and heatmap), ask which taxonomic level they want to visualize to
-    conditionalPanel(condition = "input.tabselected == 6 | input.tabselected == 7",
+    conditionalPanel(condition = "input.tabselected == 7 | input.tabselected == 8",
                      uiOutput("which_taxon_level")),
-    conditionalPanel(condition = "input.tabselected == 6 | input.tabselected == 7",
+    conditionalPanel(condition = "input.tabselected == 7 | input.tabselected == 8",
                      radioButtons("rared_taxplots", "Choose whether you would like to view the taxonomy barplot and heatmap for the
                                   rarefied or unrarefied datasets",
                                   choices = c("unrarefied", "rarefied"))),
-    conditionalPanel(condition = "input.tabselected == 7",
-                     uiOutput("select_species_heat"))
+    conditionalPanel(condition = "input.tabselected == 8",
+                     uiOutput("select_species_heat")),
+    conditionalPanel(condition = "input.tabselected == 4",
+                     uiOutput("which_variable_alphaDiv"))
+
 
   ),
 
@@ -83,9 +86,10 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                h3("Rarefied samples"),
                plotlyOutput("rarefaction_r"), height = "1000px"),
 
-      tabPanel("Alpha Diversity", value = 3,
+      tabPanel("Alpha Diversity plots", value = 3,
                includeMarkdown("docs/alpha-div-overview.md"),
-               plotlyOutput("alpharichness"),
+               plotlyOutput("alpharichness")),
+    tabPanel("Alpha Diversity Stats", value = 4,
                includeMarkdown("docs/alpha-div-anova.md"),
                tableOutput("alphaDivAOV"),
                includeMarkdown("docs/alpha-div-tukey.md"),
@@ -93,7 +97,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                tableOutput("alphaDivTukey")),
 
       # beta Diversity panels - first, just plots
-      tabPanel("Beta Diversity exploration", value = 4,
+      tabPanel("Beta Diversity plots", value = 5,
                includeMarkdown("docs/beta-div-overview.md"),
                h4("PCoA plot"),
                plotlyOutput("betanmdsplotly"),
@@ -101,7 +105,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                plotOutput("dissimMap")),
 
       # beta Diversity panels- second, just stats
-      tabPanel("Beta Diversity stats", value = 5,
+      tabPanel("Beta Diversity stats", value = 6,
                includeMarkdown("docs/beta-div-adonis.md"),
                h3("Adonis table"),
                tableOutput("adonisTable"),
@@ -112,9 +116,9 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                verbatimTextOutput("permTestTable"),
                h4("Multivariate homogeneity of groups dispersions - Post-hoc Tukey"),
                tableOutput("betaTukey")),
-      tabPanel("Taxonomy Barplot", value = 6,
+      tabPanel("Taxonomy Barplot", value = 7,
                plotlyOutput("tax_bar")),
-      tabPanel("Taxonomy Heatmap", value = 7,
+      tabPanel("Taxonomy Heatmap", value = 8,
                plotlyOutput("tax_heat", height = "750px", width = "750px")),
 
       id = "tabselected"
