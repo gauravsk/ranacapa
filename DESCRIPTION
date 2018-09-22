@@ -9,7 +9,7 @@ Description: A set of utility functions to help explore output from the Anacapa 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Imports:
     ggplot2,
     dplyr,
@@ -19,16 +19,7 @@ Imports:
     tibble,
     magrittr,
     shiny,
-    shinythemes,
-    plotly,
-    gridBase,
-    broom,
-    gridExtra,
-    scales,
-    heatmaply,
     methods,
-    ggdendro,
-    stringr,
-    markdown,
-    DT
+    stringr
 Suggests: testthat
+
