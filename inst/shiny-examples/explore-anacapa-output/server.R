@@ -274,16 +274,12 @@ server <- function(input, output)({
                          color = input$var,
                          shape = input$var)
 
-      alpha_angle <- reactive({
-        if (!input$rotate_x){ 0 } else { 45 }
-      })
-
       q <- p +
-        geom_boxplot(aes_string(fill = input$var, alpha=0.2, show.legend = F)) +
+        geom_boxplot(aes_string(fill = input$var, alpha=0.2)) +
         theme_ranacapa() +
         theme(legend.position = "none") +
         theme(axis.title = element_blank()) +
-        theme(axis.text.x = element_text(angle = alpha_angle()))
+        theme(axis.text.x = element_text(angle = 45))
       gp <- ggplotly(tooltip = c("x", "value")) %>%
         layout(yaxis = list(title = paste(input$divtype, "Diversity"), titlefont = list(size = 16)),
                xaxis = list(title = input$var, titlefont = list(size = 16)),
