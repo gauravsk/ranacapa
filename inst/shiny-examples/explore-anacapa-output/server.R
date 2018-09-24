@@ -64,7 +64,7 @@ server <- function(input, output)({
   output$which_dissim <- renderUI({
     radioButtons("dissimMethod",
                  "Which type of distance metric would you like?",
-                 choices = c("bray", "jaccard"))
+                 choices = c("Jaccard Dissimilarity", "Bray-Curtis Dissimilarity"))
   })
 
   # RenderUI for which_taxon_level, used for barplot and heatmap in Panels 7,8
@@ -306,11 +306,15 @@ server <- function(input, output)({
 
   # Panel 5: Beta Diversity exploration plots ------------
   # PCoA plotly
+  dissimMethod <- reactive({
+    ifelse(input$dissimMethod == "Jaccard Dissimilarity", "jaccard", "bray")
+  })
+
   output$betanmdsplotly <- renderPlotly({
     withProgress(message = 'Rendering beta diversity plot', value = 0, {
       incProgress(0.5)
 
-      d <- distance(data_subset(), method=input$dissimMethod)
+      d <- distance(data_subset(), method= dissimMethod())
       ord <- ordinate(data_subset(), method = "MDS", distance = d)
       nmdsplot <- plot_ordination(data_subset(), ord, input$var,
                                   color = input$var, shape = input$var) +
@@ -327,7 +331,7 @@ server <- function(input, output)({
 
   # Other beta diversity plot
   output$dissimMap <- renderPlot({
-    d <- distance(data_subset(), method = input$dissimMethod)
+    d <- distance(data_subset(), method = dissimMethod())
 
     # Ward linkage map
     wcluster <- as.dendrogram(hclust(d, method = "ward.D2"))
@@ -342,20 +346,20 @@ server <- function(input, output)({
   # Panel 6: Beta diversity statistics ----------
   output$adonisTable <- renderTable ({
     sampledf <- data.frame(sample_data(data_subset()))
-    dist_obj <- phyloseq::distance(data_subset(), method = input$dissimMethod)
+    dist_obj <- phyloseq::distance(data_subset(), method = dissimMethod())
     broom::tidy(adonis(as.formula(paste("dist_obj~", input$var)), data = sampledf)$aov.tab)
 
   }, digits = 5)
 
   output$permTestTable <- renderPrint({
     sdf <- as(sample_data(data_subset()), "data.frame")
-    dist_obj <- phyloseq::distance(data_subset(), method = input$dissimMethod)
+    dist_obj <- phyloseq::distance(data_subset(), method = dissimMethod())
     betadisper(dist_obj, getElement(sdf, input$var))
   })
 
   output$betaTukey <- renderTable({
     sdf <- as(sample_data(data_subset()), "data.frame")
-    dist_obj <- phyloseq::distance(data_subset(), method = input$dissimMethod)
+    dist_obj <- phyloseq::distance(data_subset(), method = dissimMethod())
     broom::tidy(TukeyHSD(betadisper(dist_obj, getElement(sdf, input$var))))
   }, digits = 5)
 
@@ -363,7 +367,7 @@ server <- function(input, output)({
     sdf <- as(sample_data(data_subset()), "data.frame")
     veganComm <- vegan_otu(data_subset())
     pairwise_adonis(veganComm, getElement(sdf, input$var),
-                    sim_method = input$dissimMethod)
+                    sim_method = dissimMethod())
   })
 
 
