@@ -12,6 +12,7 @@ library(tibble)
 library(ranacapa)
 library(scales)
 library(heatmaply)
+library(markdown)
 
 options(digits = 5, shiny.maxRequestSize = 10 * 1024 ^ 2)
 
