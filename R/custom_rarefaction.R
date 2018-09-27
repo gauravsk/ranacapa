@@ -20,6 +20,7 @@ custom_rarefaction <- function(physeq_object, sample_size = 10000, replicates = 
   dfs <- lapply(dfs, function(x) tibble::rownames_to_column(x, var = "taxonomy"))
   dfs <- do.call(rbind.data.frame, dfs)
 
+  # Calculate the average number of reads per replicate
   otu <- dfs %>% dplyr::group_by(taxonomy) %>%
     dplyr::summarize_all(dplyr::funs(sum(.) / replicates)) %>%
     dplyr::mutate_if(is.numeric, dplyr::funs(round)) %>%
