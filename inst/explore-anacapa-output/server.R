@@ -316,7 +316,7 @@ server <- function(input, output)({
       incProgress(0.5)
 
       d <- distance(data_subset(), method= dissimMethod())
-      ord <- ordinate(data_subset(), method = "MDS", distance = d)
+      ord <- ordinate(data_subset(), method = "PCoA", distance = d)
       nmdsplot <- plot_ordination(data_subset(), ord, input$var,
                                   color = input$var, shape = input$var) +
         ggtitle(paste(input$var, "PCoA; dissimilarity method:",
