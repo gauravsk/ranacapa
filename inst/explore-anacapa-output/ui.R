@@ -65,14 +65,14 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
       tabPanel("Data Import", value = 1,
 
                h2("Please verify that the files below look as expected, and click the RUN THE APP button below to get started!"),
+               h4("Select any continuous variables that you want to treat as categorical for this analysis"),
+               uiOutput("numericColnames"),
 
                h4("Input taxonomy file"),
                DT::dataTableOutput("print_taxon_table"),
                h4("Input metadata file"),
-               DT::dataTableOutput("print_metadata_table"),
+               DT::dataTableOutput("print_metadata_table")
 
-               h4("Select any continuous variables that you want to treat as categorical for this analysis"),
-               uiOutput("numericColnames")#,
 
                # h3("Press the button below to run the app!"),
                # actionButton("go", "(re)Run the app!"),
@@ -80,7 +80,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                # textOutput("fileStatus")
 
     ),
-    tabPanel("Rarefaction", value = 2,
+    tabPanel("Sequencing Depth", value = 2,
              includeMarkdown("docs/rarefaction-overview.md"),
              h3("Unrarefied samples - taxon accumulation"),
              plotlyOutput("rarefaction_ur"),

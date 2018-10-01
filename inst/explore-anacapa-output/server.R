@@ -45,7 +45,7 @@ server <- function(input, output)({
   })
   output$numericColnames <- renderUI({
     if (length(heads_numeric()) == 0) {
-      textOutput("No continuous variables detected")
+      radioButtons("which_cont_to_cat", label = " ", choices = "No numeric columns detected", selected = 1)
     } else {
       checkboxGroupInput("which_cont_to_cat",
                          label = "",

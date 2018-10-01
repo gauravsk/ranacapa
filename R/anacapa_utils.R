@@ -22,6 +22,7 @@ group_anacapa_by_taxonomy <- function(taxon_table) {
 
 categorize_continuous_vector <- function(vec) {
   if (is.numeric(vec)) {
+    vec <- na.omit(vec)
     if (length(unique(vec)) > 2) {
       cut(vec, breaks = c(0, stats::quantile(vec, probs = seq(from = 1/3, to = 1, by = 1/3))),
           labels = c("low", "medium", "high"), include.lowest = TRUE)
