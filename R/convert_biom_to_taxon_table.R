@@ -11,7 +11,7 @@ convert_biom_to_taxon_table <- function(physeq_object) {
   community_table <- physeq_object@otu_table %>%
     as.data.frame() %>%
     tibble::rownames_to_column("id")
-  taxon_table <- data.frame(as(physeq_object@tax_table, "matrix"))
+  taxon_table <- data.frame(methods::as(physeq_object@tax_table, "matrix"))
 
   # Summarize the taxonomy and clean it up by removing some info that never gets used
   taxon_table$sum.taxonomy <- paste(taxon_table$Rank2,

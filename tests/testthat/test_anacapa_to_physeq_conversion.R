@@ -79,22 +79,3 @@ test_that("extra entries in metadata file get filtered out", {
                      select(site) %>% unlist %>% as.character,
                    good_taxon_table %>% select(-sum.taxonomy) %>% colnames)
 })
-
-# make sure that numeric gets converted to categorical if requested
-good_maps_with_numeric <- good_maps
-good_maps_with_numeric$num1 = c(.5, 1.8)
-good_maps_with_numeric$num2 = c(.3, 1.9)
-
-test_that("user-requested conversion of continuous variable sworks", {
-  expect_equal(convert_anacapa_to_phyloseq(good_taxon_table, good_maps_with_numeric, "num1") %>%
-                 sample_data %>% select(num1) %>% unlist(., use.names = F) %>% as.character(),
-               c("low", "high"))
-
-  # num2 is not converted
-  expect_equal(convert_anacapa_to_phyloseq(good_taxon_table, good_maps_with_numeric, "num1") %>%
-                 sample_data %>% select(num2) %>% unlist(., use.names = F),
-               c(.3, 1.9))
-
-})
-
-
