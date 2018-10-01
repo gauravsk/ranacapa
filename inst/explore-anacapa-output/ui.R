@@ -65,8 +65,6 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
       tabPanel("Data Import", value = 1,
 
                h2("Please verify that the files below look as expected, and click the RUN THE APP button below to get started!"),
-               h4("Select any continuous variables that you want to treat as categorical for this analysis"),
-               uiOutput("numericColnames"),
 
                h4("Input taxonomy file"),
                DT::dataTableOutput("print_taxon_table"),

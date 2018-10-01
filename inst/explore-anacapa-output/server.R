@@ -43,15 +43,6 @@ server <- function(input, output)({
                 accept = c(".txt", ".tsv"))
     }
   })
-  output$numericColnames <- renderUI({
-    if (length(heads_numeric()) == 0) {
-      radioButtons("which_cont_to_cat", label = " ", choices = "No numeric columns detected", selected = 1)
-    } else {
-      checkboxGroupInput("which_cont_to_cat",
-                         label = "",
-                         choices = heads_numeric())
-    }
-  })
 
 
   # RenderUI for which_divtype, for Alpha Diversity Panel 4
@@ -173,8 +164,7 @@ server <- function(input, output)({
 
   physeq <- eventReactive(input$go, {
     convert_anacapa_to_phyloseq(taxon_table = taxonomy_table(),
-                                metadata_file = mapping_file(),
-                                cols_to_categorize = input$which_cont_to_cat)
+                                metadata_file = mapping_file())
   })
 
   # Make the object heads, that has the column names in the metadata file
