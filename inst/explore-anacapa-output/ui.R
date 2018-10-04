@@ -69,10 +69,8 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                h4("Input taxonomy file"),
                DT::dataTableOutput("print_taxon_table"),
                h4("Input metadata file"),
-               DT::dataTableOutput("print_metadata_table"),
+               DT::dataTableOutput("print_metadata_table")
 
-               h4("Select any continuous variables that you want to treat as categorical for this analysis"),
-               uiOutput("numericColnames")#,
 
                # h3("Press the button below to run the app!"),
                # actionButton("go", "(re)Run the app!"),
