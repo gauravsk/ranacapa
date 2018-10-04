@@ -4,8 +4,7 @@
 \alias{custom_rarefaction}
 \title{Rarefy a phyloseq object to a custom sample depth and with given number of repliactes}
 \usage{
-custom_rarefaction(physeq_object, sample_size = 10000, replicates = 10,
-  ...)
+custom_rarefaction(physeq_object, sample_size = 10000, replicates = 10, ...)
 }
 \arguments{
 \item{physeq_object}{A phyloseq class object to be rarefied}

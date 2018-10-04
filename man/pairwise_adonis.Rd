@@ -4,8 +4,8 @@
 \alias{pairwise_adonis}
 \title{Pairwise multilevel comparison using adonis}
 \usage{
-pairwise_adonis(x, factors, sim_method = "bray",
-  p_adjust_m = "bonferroni", reduce = NULL)
+pairwise_adonis(x, factors, sim_method = "bray", p_adjust_m = "bonferroni",
+  reduce = NULL)
 }
 \arguments{
 \item{x}{Data frame (the community table).}

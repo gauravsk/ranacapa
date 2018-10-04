@@ -80,7 +80,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                # textOutput("fileStatus")
 
     ),
-    tabPanel("Rarefaction", value = 2,
+    tabPanel("Sequencing depth", value = 2,
              includeMarkdown("docs/rarefaction-overview.md"),
              h3("Unrarefied samples - taxon accumulation"),
              plotlyOutput("rarefaction_ur"),
