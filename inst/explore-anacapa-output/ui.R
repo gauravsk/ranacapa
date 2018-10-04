@@ -17,7 +17,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                      uiOutput("biomSelect"),
                      uiOutput("metaSelect"),
                      h3("Press the button below to run the app!"),
-                     actionButton("go", "(re)Run the app!"),
+                     actionButton("go", "Run the app!"),
                      textOutput("fileStatus")
     ),
 
@@ -64,7 +64,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
               ),
       tabPanel("Data Import", value = 1,
 
-               h2("Please verify that the files below look as expected, and click the RUN THE APP button below to get started!"),
+               h2("Please verify that the files below look as expected, and click on 'Run the app!' to get started!"),
 
                h4("Input taxonomy file"),
                DT::dataTableOutput("print_taxon_table"),
@@ -122,8 +122,14 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
              verbatimTextOutput("permTestTable"),
              h4("Multivariate homogeneity of groups dispersions - Post-hoc Tukey"),
              tableOutput("betaTukey")),
+    tabPanel("Data export", value = 10,
+             includeMarkdown("docs/download-text-BIOM.md"),
+             downloadButton("downloadTableForBiom", "Download BIOM-formatted taxonomy table"),
+             includeMarkdown("docs/download-text-phyloseq.md"),
+             downloadButton("downloadPhyloseqObject", "Download phyloseq object")),
 
     id = "tabselected"
     )
+
   )
 ))

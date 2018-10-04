@@ -433,5 +433,41 @@ server <- function(input, output)({
 
   })
 
+  table_for_download <- reactive({
+    taxcol <- reshape2::colsplit(taxonomy_table()$sum.taxonomy, ";", paste0("V", 1:6))%>%
+      mutate(V1 = paste0("p__", V1),
+             V2 = paste0("c__", V2),
+             V3 = paste0("o__", V3),
+             V4 = paste0("f__", V4),
+             V5 = paste0("g__", V5),
+             V6 = paste0("s__", V6))  %>%
+      mutate(taxonomy =  paste(V1, V2, V3, V4, V5, V6, sep = ";")) %>%
+      select(-c(V1, V2, V3, V4, V5, V6))
+    cbind(taxonomy_table() %>% rename(taxID = sum.taxonomy), taxcol)
+
+  })
+  output$downloadTableForBiom <- downloadHandler(
+
+
+    filename = function() {
+      paste("taxonomy-for-biom.txt", sep = "")
+    },
+    content = function(file) {
+      write.csv(table_for_download(), file, row.names = FALSE, quote = F)
+    }
+  )
+
+  output$downloadPhyloseqObject <- downloadHandler(
+
+
+    filename = function() {
+      paste("phyloseq-object.Rds", sep = "")
+    },
+    content = function(file) {
+      saveRDS(data_subset_unrare(), file)
+    }
+  )
+
+
 
 })
