@@ -5,9 +5,8 @@ account: gauravsk
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 342811
-bundleId: 1623964
+bundleId: 1625542
 url: https://gauravsk.shinyapps.io/ranacapa/
-when: 1538697420.67556
+when: 1538761712.4495
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: www/assembly2.png|www/assembly.png
