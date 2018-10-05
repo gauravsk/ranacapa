@@ -3,6 +3,8 @@ Type: Package
 Title: Utility Functions For Downstream Anacapa Analyses in R
 Version: 0.1.0
 Author: Gaurav Kandlikar
+BugReports: https://github.com/gauravsk/ranacapa/issues
+URL: https://github.com/gauravsk/ranacapa
 Maintainer: Gaurav Kandlikar <gkandlikar@ucla.edu>
 Description: A set of utility functions to help explore output from the Anacapa eDNA pipeline
     An amalgamation of functions written for Anacapa and existing functions from published sources.

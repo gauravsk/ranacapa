@@ -4,12 +4,6 @@
 
 ### How to install:
 
-
-#### NOTE! 21 April 2018: If you are having problems with the Beta Diversity options, follow the steps in the issue linked below.
-
-[Temporary workaround to beta diversity issue](https://github.com/gauravsk/ranacapa/issues/5)
-
-
 0. Install the `phyloseq` and `devtools` packages into `R` if you don't already have them:  
 ```
 source('http://bioconductor.org/biocLite.R')
