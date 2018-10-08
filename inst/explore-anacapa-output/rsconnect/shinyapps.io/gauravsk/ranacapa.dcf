@@ -5,8 +5,8 @@ account: gauravsk
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 342811
-bundleId: 1625542
+bundleId: 1630564
 url: https://gauravsk.shinyapps.io/ranacapa/
-when: 1538761712.4495
+when: 1539039880.4528
 asMultiple: FALSE
 asStatic: FALSE

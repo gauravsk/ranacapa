@@ -6,6 +6,10 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("sum.taxonomy", "."))
 #' @author Gaurav Kandlikar
 #' @export
 group_anacapa_by_taxonomy <- function(taxon_table) {
+  # If tables were made in New Anacapa (with Domain), get rid of domain...
+  if(stringr::str_count(taxon_table$sum.taxonomy, ";")[1] == 6) {
+    taxon_table$sum.taxonomy = gsub(pattern = "^.*?;", replacement = "", x = taxon_table$sum.taxonomy)
+  }
   taxon_table %>%
     dplyr::filter(sum.taxonomy != "") %>%
     dplyr::group_by(sum.taxonomy) %>%
