@@ -6,8 +6,8 @@ Author: Gaurav Kandlikar
 BugReports: https://github.com/gauravsk/ranacapa/issues
 URL: https://github.com/gauravsk/ranacapa
 Maintainer: Gaurav Kandlikar <gkandlikar@ucla.edu>
-Description: A set of utility functions to help explore output from the Anacapa eDNA pipeline
-    An amalgamation of functions written for Anacapa and existing functions from published sources.
+Description: A set of utility functions to help explore output from the Anacapa eDNA pipeline.
+    This package is an amalgamation of functions written for Anacapa and existing functions from published sources.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -23,5 +23,9 @@ Imports:
     shiny,
     methods,
     stringr
-Suggests: testthat
+Suggests: 
+    testthat,
+    scales,
+    heatmaply,
+    markdown
 
