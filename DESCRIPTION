@@ -27,6 +27,7 @@ Imports:
     heatmaply,
     markdown,
     shinythemes,
-    plotly
+    plotly,
+    DT
 Suggests:
     testthat
