@@ -22,11 +22,11 @@ Imports:
     magrittr,
     shiny,
     methods,
-    stringr
-Suggests:
-    testthat,
+    stringr,
     scales,
     heatmaply,
     markdown,
     shinythemes,
     plotly
+Suggests:
+    testthat
