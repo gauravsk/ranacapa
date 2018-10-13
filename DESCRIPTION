@@ -23,9 +23,10 @@ Imports:
     shiny,
     methods,
     stringr
-Suggests: 
+Suggests:
     testthat,
     scales,
     heatmaply,
-    markdown
-
+    markdown,
+    shinythemes,
+    plotly
