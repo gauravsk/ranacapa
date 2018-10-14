@@ -8,7 +8,7 @@ There were no ERRORs or WARNINGs.
 There is one NOTE:
   ```
   Namespaces in Imports field not imported from:
-  ‘heatmaply’ ‘markdown’ ‘plotly’ ‘scales’ ‘shinythemes’
+  ‘heatmaply’ ‘markdown’ ‘plotly’ ‘scales’ ‘shinythemes’, ‘DT’
   All declared Imports should be used.
   ```
 
