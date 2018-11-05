@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/gauravsk/ranacapa.svg?branch=master)](https://travis-ci.org/gauravsk/ranacapa)
+[![Build Status](https://travis-ci.org/gauravsk/ranacapa.svg?branch=master)](https://travis-ci.org/gauravsk/ranacapa)     [![DOI](https://zenodo.org/badge/117275741.svg)](https://zenodo.org/badge/latestdoi/117275741)
+
+
 
 ## ranacapa: Explore output from Anacapa in R
 
