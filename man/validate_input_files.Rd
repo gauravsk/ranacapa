@@ -30,6 +30,10 @@ The standards incude:
 4. All columns apart from sum.taxonomy should be numeric
 5. All columns apart from sum.taxonomy should have corresponding row in metadata file
 }
-\author{
-Gaurav Kandlikar
+\examples{
+good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+site_1 = c(0,1), site_2 = c(10, 20))
+good_maps <- data.frame(site = c("site_1", "site_2"),
+season = c("wet", "dry"), host = c("oak", "sage"))
+validate_input_files(good_taxon_table, good_maps)
 }

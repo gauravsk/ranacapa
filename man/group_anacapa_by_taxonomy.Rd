@@ -12,6 +12,11 @@ group_anacapa_by_taxonomy(taxon_table)
 \description{
 Takes a site-abundance table from Anacapa, and summarizes to each unique taxon in the sum.taxonomy column
 }
+\examples{
+good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+site_1 = c(0,1), site_2 = c(10, 20))
+group_anacapa_by_taxonomy(good_taxon_table)
+}
 \author{
 Gaurav Kandlikar
 }

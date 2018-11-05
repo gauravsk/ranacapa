@@ -17,6 +17,8 @@ ana_taxon_table with scrubbed 'sum.taxonomy' column
 Replace empty calls in Anacapa taxonomy tables with Unknown
 (that is what they effectively are to most users)
 }
-\author{
-Gaurav Kandlikar
+\examples{
+good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+site_1 = c(0,1), site_2 = c(10, 20))
+scrub_taxon_paths(good_taxon_table)
 }

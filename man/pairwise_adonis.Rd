@@ -40,6 +40,3 @@ sim_method = 'euclidian', p_adjust_m = 'holm')
 pairwise_adonis(x = iris[, 1:4], factors = iris$Species,
 sim_method = 'manhattan', p_adjust_m = 'bonferroni')
 }
-\author{
-Pedro Martinez Arbizu
-}

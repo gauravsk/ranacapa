@@ -6,7 +6,13 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("sum.taxonomy", ".", "id
 #' @param replicates Desired number of times to resample from community
 #' @param ... Other options for phyloseq function rarefy_even_depth
 #' @return phyloseq class object
-#' @author Gaurav Kandlikar
+#' @examples
+#' good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+#'  site_1 = c(0,1), site_2 = c(10, 20))
+#' good_maps <- data.frame(site = c("site_1", "site_2"),
+#'  season = c("wet", "dry"), host = c("oak", "sage"))
+#' physeq_object <- convert_anacapa_to_phyloseq(good_taxon_table, good_maps)
+#' custom_rarefaction(physeq_object, sample_size = 10, replicates = 1)
 #' @export
 
 custom_rarefaction <- function(physeq_object, sample_size = 10000, replicates = 10, ...) {

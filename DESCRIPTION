@@ -1,12 +1,15 @@
 Package: ranacapa
 Type: Package
-Title: Utility Functions and Shiny App for Simple Environmental DNA Visualizations and Analyses in R
+Title: Utility Functions and 'shiny' App for Simple Environmental DNA Visualizations and Analyses
 Version: 0.1.0
-Author: Gaurav Kandlikar
 BugReports: https://github.com/gauravsk/ranacapa/issues
 URL: https://github.com/gauravsk/ranacapa
-Maintainer: Gaurav Kandlikar <gkandlikar@ucla.edu>
-Description: A set of utility functions to help explore output from the Anacapa eDNA pipeline.
+Authors@R: c(
+    person("Gaurav", "Kandlikar", email = "gkandlikar@ucla.edu", role = c("cre", "aut")),
+    person("Madeline", "Cowen", email = "mcowen@ucla.edu", role = "ctb"),
+    person("Pedro", "Martinez Arbizu", email = "Pedro.Martinez@senckenberg.de", role = "ctb"),
+    person("Mahendra", "Mariadassou", email = "mahendra.mariadassou@inra.fr", role = "ctb"))
+Description: A set of utility functions to help explore output from the Anacapa eDNA pipeline <https://github.com/limey-bean/Anacapa>.
     This package is an amalgamation of functions written for Anacapa and existing functions from published sources.
 License: GPL-3
 Encoding: UTF-8

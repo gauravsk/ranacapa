@@ -15,6 +15,11 @@ vegan-style community matrix
 \description{
 Takes a phyloseq object with an otu_table object and returns a vegan style community matrix.
 }
-\author{
-Gaurav Kandlikar
+\examples{
+good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+site_1 = c(0,1), site_2 = c(10, 20))
+good_maps <- data.frame(site = c("site_1", "site_2"), season = c("wet", "dry"),
+host = c("oak", "sage"))
+physeq_object <- convert_anacapa_to_phyloseq(good_taxon_table, good_maps)
+vegan_otu(physeq_object)
 }

@@ -5,8 +5,12 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Phylum", "Class", "Orde
 #' any longer
 #'
 #' @param taxon_table taxonomy table from Anacapa
-#' @author Gaurav Kandlikar
 #' @return ana_taxon_table file, with "xxx_seq_number" column removed (if it existed)
+#' @examples
+#' good_taxon_table <- data.frame(seq_number = c(1,2),
+#' sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+#' site_1 = c(0,1), site_2 = c(10, 20))
+#' scrub_seqNum_column(good_taxon_table)
 #' @export
 scrub_seqNum_column <- function(taxon_table) {
   to_return <- taxon_table %>% dplyr::select(-dplyr::matches("seq_number"))
@@ -17,7 +21,10 @@ scrub_seqNum_column <- function(taxon_table) {
 #' (that is what they effectively are to most users)
 #' @param taxon_table taxonomy table from Anacapa
 #' @return ana_taxon_table with scrubbed 'sum.taxonomy' column
-#' @author Gaurav Kandlikar
+#' @examples
+#' good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+#' site_1 = c(0,1), site_2 = c(10, 20))
+#' scrub_taxon_paths(good_taxon_table)
 #' @export
 scrub_taxon_paths <- function(taxon_table) {
   to_return <- taxon_table
@@ -53,7 +60,12 @@ scrub_taxon_paths <- function(taxon_table) {
 #' 5. All columns apart from sum.taxonomy should have corresponding row in metadata file
 #' @param taxon_table taxonomy table from Anacapa
 #' @param metadata_file Qiime-style mapping
-#' @author Gaurav Kandlikar
+#' @examples
+#' good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+#' site_1 = c(0,1), site_2 = c(10, 20))
+#' good_maps <- data.frame(site = c("site_1", "site_2"),
+#' season = c("wet", "dry"), host = c("oak", "sage"))
+#' validate_input_files(good_taxon_table, good_maps)
 #' @export
 validate_input_files <- function(taxon_table, metadata_file) {
 

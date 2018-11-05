@@ -17,6 +17,13 @@ phyloseq class object
 \description{
 Takes an site-abundance table from Anacapa, along with a qiime-style mapping file, and returns a phyloseq object
 }
+\examples{
+good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+site_1 = c(0,1), site_2 = c(10, 20))
+good_maps <- data.frame(site = c("site_1", "site_2"), season = c("wet", "dry"),
+ host = c("oak", "sage"))
+convert_anacapa_to_phyloseq(good_taxon_table, good_maps)
+}
 \author{
 Gaurav Kandlikar
 }

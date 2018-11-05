@@ -25,3 +25,11 @@ ggrare(physeq_object, step = 10, label = NULL, color = NULL,
 \description{
 Make a rarefaction curve using ggplot2
 }
+\examples{
+good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+site_1 = c(0,1), site_2 = c(10, 20))
+good_maps <- data.frame(site = c("site_1", "site_2"),
+season = c("wet", "dry"), host = c("oak", "sage"))
+physeq_object <- convert_anacapa_to_phyloseq(good_taxon_table, good_maps)
+ggrare(physeq_object, step = 20, se = TRUE)
+}

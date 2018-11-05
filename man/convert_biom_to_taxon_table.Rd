@@ -14,6 +14,3 @@ convert_biom_to_taxon_table(physeq_object)
 Takes a biom table imported in using phyloseq::import_biom() and converts it
 into an Anacapa-formmated taxonomy table
 }
-\author{
-Gaurav Kandlikar
-}

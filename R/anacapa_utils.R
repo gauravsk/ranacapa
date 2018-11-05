@@ -4,6 +4,10 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("sum.taxonomy", "."))
 #' Takes a site-abundance table from Anacapa, and summarizes to each unique taxon in the sum.taxonomy column
 #' @param taxon_table OTU table from Anacapa
 #' @author Gaurav Kandlikar
+#' @examples
+#' good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+#' site_1 = c(0,1), site_2 = c(10, 20))
+#' group_anacapa_by_taxonomy(good_taxon_table)
 #' @export
 group_anacapa_by_taxonomy <- function(taxon_table) {
   # If tables were made in New Anacapa (with Domain), get rid of domain...
@@ -24,6 +28,12 @@ group_anacapa_by_taxonomy <- function(taxon_table) {
 #' @param metadata_file Metadata file with rows as sites, columns as variables
 #' @return phyloseq class object
 #' @author Gaurav Kandlikar
+#' @examples
+#' good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+#' site_1 = c(0,1), site_2 = c(10, 20))
+#' good_maps <- data.frame(site = c("site_1", "site_2"), season = c("wet", "dry"),
+#'  host = c("oak", "sage"))
+#' convert_anacapa_to_phyloseq(good_taxon_table, good_maps)
 #' @export
 
 convert_anacapa_to_phyloseq <- function(taxon_table, metadata_file) {
@@ -68,7 +78,13 @@ convert_anacapa_to_phyloseq <- function(taxon_table, metadata_file) {
 #' Takes a phyloseq object with an otu_table object and returns a vegan style community matrix.
 #' @param physeq_object phyloseq object with an otu_table object within
 #' @return vegan-style community matrix
-#' @author Gaurav Kandlikar
+#' @examples
+#' good_taxon_table <- data.frame(sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+#' site_1 = c(0,1), site_2 = c(10, 20))
+#' good_maps <- data.frame(site = c("site_1", "site_2"), season = c("wet", "dry"),
+#' host = c("oak", "sage"))
+#' physeq_object <- convert_anacapa_to_phyloseq(good_taxon_table, good_maps)
+#' vegan_otu(physeq_object)
 #' @export
 vegan_otu <- function(physeq_object) {
   OTU <- phyloseq::otu_table(physeq_object)

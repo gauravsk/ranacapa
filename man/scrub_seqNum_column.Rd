@@ -21,6 +21,9 @@ takes one taxon table as its input, and if it include
 a column named "xxx_seq_number", it gets rid of that column - it's not of use to us
 any longer
 }
-\author{
-Gaurav Kandlikar
+\examples{
+good_taxon_table <- data.frame(seq_number = c(1,2),
+sum.taxonomy = c("a;b;c;d;f;u", "p;q;r;s;t;u"),
+site_1 = c(0,1), site_2 = c(10, 20))
+scrub_seqNum_column(good_taxon_table)
 }

@@ -10,7 +10,6 @@
 #' default is 'bonferroni'.
 #'@param reduce String. Restrict comparison to pairs including these factors. If more than one factor, separate by pipes like:  reduce = 'setosa|versicolor'
 #'@return Table with the pairwise factors, F-values, R^2, p.value and adjusted p.value.
-#'@author Pedro Martinez Arbizu
 #'@examples
 #' data(iris)
 #' pairwise_adonis(iris[, 1:4], iris$Species)
