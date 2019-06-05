@@ -8,10 +8,14 @@
 
 0. Install the `phyloseq` and `devtools` packages into `R` if you don't already have them:  
 ```
-source('http://bioconductor.org/biocLite.R')
-biocLite('phyloseq')
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
 
-install.packages('devtools')
+BiocManager::install("multtest")
+BiocManager::install("phyloseq")
+
+if (!requireNamespace("devtools", quietly = TRUE))
+      install.packages('devtools')
 ```
 
 1. Install ranacapa:
