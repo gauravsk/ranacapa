@@ -21,7 +21,7 @@ shinyUI(bootstrapPage(theme = shinytheme("sandstone"),
                      textOutput("fileStatus")
     ),
 
-    # For panels 3, 4, 5, 6, ask user which varible they would like to visualize on
+    # For panels 3, 4, 5, 6, ask user which variable they would like to visualize on
     conditionalPanel(condition = "input.tabselected == 3 | input.tabselected == 5 |
                      input.tabselected == 6 | input.tabselected == 2",
                      uiOutput("which_variable_r")),
