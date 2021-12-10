@@ -260,8 +260,8 @@ server <- function(input, output)({
       p <- plot_richness(data_subset(),
                          x = input$var,
                          measures= input$divtype,
-                         color = input$var,
-                         shape = input$var)
+                         color = input$var)
+                         
 
       q <- p +
         geom_boxplot(aes_string(fill = input$var, alpha=0.2)) +
@@ -306,7 +306,7 @@ server <- function(input, output)({
       d <- distance(data_subset(), method= dissimMethod())
       ord <- ordinate(data_subset(), method = "PCoA", distance = d)
       nmdsplot <- plot_ordination(data_subset(), ord, input$var,
-                                  color = input$var, shape = input$var) +
+                                  color = input$var) +
         ggtitle(paste(input$var, "PCoA; dissimilarity method:",
                       tools::toTitleCase(input$dissimMethod))) +
         theme(plot.title = element_text(hjust = 0.5)) +
