@@ -372,7 +372,7 @@ server <- function(input, output)({
       } else {
         physeqGlommed = tax_glom(data_subset(), input$taxon_level)
       }
-      plot_bar(physeqGlommed, fill = input$taxon_level) + theme_ranacapa() +
+      plot_bar(physeqGlommed, fill = input$taxon_level) + theme_ranacapa() + facet_grid = input$var +
         theme(axis.text.x = element_text(angle = 45)) +
         theme(axis.title = element_blank())
       gp <- ggplotly() %>%
